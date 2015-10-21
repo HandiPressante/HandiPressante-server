@@ -2,7 +2,7 @@
 
 
 function connect(){
-	require 'config.inc.php';
+require 'config.inc.php';
 	$pdo = null;
 	try {
     	$pdo = new PDO('mysql:host=localhost;dbname=' . $config['database']['dbname'].';charset=UTF8', $config['database']['user'], $config['database']['pass']);
