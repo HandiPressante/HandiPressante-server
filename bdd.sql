@@ -1,8 +1,16 @@
 SET foreign_key_checks = 0;
 
 DROP TABLE IF EXISTS toilettes;
+DROP TABLE IF EXISTS images;
 
 SET foreign_key_checks = 1;
+
+CREATE TABLE images(
+	id INT references toilettes(id)
+  ,image varchar (60) PRIMARY KEY
+);
+
+INSERT INTO images(id,image) VALUES (80,'./images/1.jpeg');
 
 CREATE TABLE toilettes(
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY
@@ -123,3 +131,4 @@ INSERT INTO toilettes(id,nom,lieu,horaires,pmr,x93,y93) VALUES (NULL,'ITALIE','A
 INSERT INTO toilettes(id,nom,lieu,horaires,pmr,x93,y93) VALUES (NULL,'Paul LAFARGUE','49 avenue des Pays Bas','6h à 23h','OUI','353163.33','6786149.92');
 INSERT INTO toilettes(id,nom,lieu,horaires,pmr,x93,y93) VALUES (NULL,'HOPITAL SUD','16 bd de Bulgarie',NULL,'OUI','353711.15','6786096.30');
 INSERT INTO toilettes(id,nom,lieu,horaires,pmr,x93,y93) VALUES (NULL,'ZAGREB','Place de Zagreb','Samedi jour de marché','OUI','353496.36','6786637.74');
+

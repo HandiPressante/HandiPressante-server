@@ -31,8 +31,6 @@ function getToilettes($x,$y,$rangx,$rangy){
 	$maxy = $y + $rangy;
 	$miny = $y - $rangy;
 
-	echo ($maxx." ".$minx." ".$maxy." ".$miny);
-
 	$sql = "SELECT * FROM toilettes  WHERE x93 < :maxx AND x93 > :minx AND y93 < :maxy AND y93 > :miny";
 	
 	try {
@@ -55,5 +53,26 @@ function getToilettes($x,$y,$rangx,$rangy){
 	disconnect($db);
 }
 
+function getImages($id){
+	$db=connect();
+
+	$sql = "SELECT image FROM images  WHERE id = :id ";
+	
+	try {
+		$stmt = $db->prepare($sql);
+
+		$stmt->bindParam(':id', $id);
+	
+		$stmt->execute();
+		
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	
+	} catch (PDOException $e) {
+	    echo $e->getMessage();
+		return null;
+	}
+
+	disconnect($db);
+}
 
 ?>
