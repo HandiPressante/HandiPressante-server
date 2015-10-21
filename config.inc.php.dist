@@ -1,0 +1,5 @@
+<?php
+$config['database']['dbname'] = ""; 
+$config['database']['user'] = "";
+$config['database']['pass'] = "";
+?>
