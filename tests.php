@@ -3,7 +3,7 @@
 	include 'controller.php';
  
 
-$wc=getImages(80);
+$wc=getfiches(1);
 print_r($wc);
 
 

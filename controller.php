@@ -18,9 +18,39 @@ function disconnect($dbh) {
 
 }
 
+
+
+function getFiches($id){
+	$db=connect();
+	$succes=true;
+	$sql = "SELECT * FROM fiches WHERE id = :id ";
+	try {
+		$stmt = $db->prepare($sql);
+
+		$stmt->bindParam(':id', $id);
+	
+		$stmt->execute();
+		
+		$tmp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		$res=$tmp[0];
+		$res['moyenne']=($res['moyenne_proprete']+$res['moyenne_equipement']+$res['moyenne_accessibilite'])/3;
+
+	} catch (PDOException $e) {
+	    echo $e->getMessage();
+		
+	}
+
+	disconnect($db);
+	if($succes)
+		return $res;
+	else
+		return null;
+}
+
 function getToilettes($x,$y,$rangx,$rangy){
 	$db=connect();
-	
+	$succes=true;
 	$x=(double)$x;
 	$rangx=(double)$rangx;
 	$y=(double)$y;
@@ -41,21 +71,23 @@ function getToilettes($x,$y,$rangx,$rangy){
 		$stmt->bindParam(':maxy', $maxy);
 		$stmt->bindParam(':miny', $miny);
 
-		$stmt->execute();
-		
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$stmt->execute();	
 	
 	} catch (PDOException $e) {
 	    echo $e->getMessage();
-		return null;
+		
 	}
 
 	disconnect($db);
+	if($succes)
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	else
+		return null;
 }
 
 function getImages($id){
 	$db=connect();
-
+    $succes=true;
 	$sql = "SELECT image FROM images  WHERE id = :id ";
 	
 	try {
@@ -64,15 +96,17 @@ function getImages($id){
 		$stmt->bindParam(':id', $id);
 	
 		$stmt->execute();
-		
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	
 	} catch (PDOException $e) {
 	    echo $e->getMessage();
-		return null;
+	    $succes=false;
 	}
 
 	disconnect($db);
+	if($succes)
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	else
+		return null;
 }
 
 ?>

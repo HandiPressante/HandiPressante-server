@@ -1,47 +1,11 @@
 <?php
-require 'config.inc.php';
-require 'controller.php';
 
-require $config['slimpath'];
+	include 'controller.php';
+ 
 
-$app = new \Slim\Slim();
-
-$app->get('/toilettes/:x/:y/:xrang/:yrang', function($x,$y,$xrang,$yrang) use ($app){
-	
-
-	$wc=getToilettes($x,$y,$xrang,$yrang);
-	$res=json_encode($wc);
-
-	$app->response->setStatus(200);
-	$app->response->setBody($res);
-	$app->response->headers->set('Content-Type', 'application/json');
-
-});
-
-$app->get('/images/:id', function($id) use ($app){
-	
-
-	$wc=getImages($id);
-	$res=json_encode($wc);
-
-	$app->response->setStatus(200);
-	$app->response->setBody($res);
-	$app->response->headers->set('Content-Type', 'application/json');
-
-});
-
-
-$app->run();
-
-
-
-
-
-
-
-
-
-//$post = request($app);
-
+$wc=getfiches(1);
+echo"<pre>";
+print_r($wc);
+echo "</pre>";
 
 ?>
