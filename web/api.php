@@ -19,9 +19,6 @@ $app->get('/toilettes/fiches/:id', function($id) use ($app){
 
 });
 
-
-
-
 $app->get('/toilettes/:x/:y/:xrang/:yrang', function($x,$y,$xrang,$yrang) use ($app){
 	
 
@@ -34,7 +31,7 @@ $app->get('/toilettes/:x/:y/:xrang/:yrang', function($x,$y,$xrang,$yrang) use ($
 
 });
 
-$app->get('/images/:id', function($id) use ($app){
+$app->get('/toilettes/images/:id', function($id) use ($app){
 	
 
 	$wc=getImages($id);
