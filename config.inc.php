@@ -1,7 +1,7 @@
 <?php
 $config['autoload'] = __DIR__ . '/vendor/autoload.php';
 
-$config['database']['dbname'] = 'handipressante'; 
+$config['database']['dbname'] = 'handi'; 
 $config['database']['user'] = 'root';
-$config['database']['pass'] = 'nworld';
+$config['database']['pass'] = 'azepoi';
 ?>
