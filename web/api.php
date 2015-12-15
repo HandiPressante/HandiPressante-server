@@ -1,60 +1,35 @@
 <?php
-require 'config.inc.php';
-require 'controller.php';
+require_once '../config.inc.php';
+require_once '../controller/toilettes.php';
 
-require $config['slimpath'];
+require_once $config['autoload'];
 
-$app = new \Slim\Slim();
+$app = new \Slim\App();
+$app->contentType('application/json;charset=utf-8');
 
 
-$app->get('/toilettes/fiches/:id', function($id) use ($app){
-	
+$app->get('/toilettes/fiches/{id}', function ($request, $response, $args) {
+	$wc = getFiches($args['id']);
+	$res = json_encode($wc);
 
-	$wc=getFiches($id);
-	$res=json_encode($wc);
-
-	$app->response->setStatus(200);
-	$app->response->setBody($res);
-	$app->response->headers->set('Content-Type', 'application/json');
-
+	return $response->write($res);
 });
 
-$app->get('/toilettes/:x/:y/:xrang/:yrang', function($x,$y,$xrang,$yrang) use ($app){
-	
+$app->get('/toilettes/{x}/{y}/{xrang}/{yrang}', function ($request, $response, $args) {
+	$wc = getToilettesL93($args['x'], $args['y'], $args['xrang'], $args['yrang']);
+	$res = json_encode($wc);
 
-	$wc=getToilettes($x,$y,$xrang,$yrang);
-	$res=json_encode($wc);
-
-	$app->response->setStatus(200);
-	$app->response->setBody($res);
-	$app->response->headers->set('Content-Type', 'application/json');
-
+	return $response->write($res);
 });
 
-$app->get('/toilettes/images/:id', function($id) use ($app){
-	
+$app->get('/toilettes/images/{id}', function ($request, $response, $args) {
+	$wc = getImages($args['id']);
+	$res = json_encode($wc);
 
-	$wc=getImages($id);
-	$res=json_encode($wc);
-
-	$app->response->setStatus(200);
-	$app->response->setBody($res);
-	$app->response->headers->set('Content-Type', 'application/json');
-
+	return $response->write($res);
 });
 
 
 $app->run();
-
-
-
-
-
-
-
-
-
-//$post = request($app);
-
 
 ?>

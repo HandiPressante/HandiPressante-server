@@ -1,0 +1,7 @@
+<?php
+$config['autoload'] = __DIR__ . '/vendor/autoload.php';
+
+$config['database']['dbname'] = 'handipressante'; 
+$config['database']['user'] = 'handipressante';
+$config['database']['pass'] = '';
+?>
