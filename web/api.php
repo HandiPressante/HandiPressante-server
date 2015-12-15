@@ -15,8 +15,8 @@ $app->get('/toilettes/fiches/{id}', function ($request, $response, $args) {
 	return $response->write($res);
 });
 
-$app->get('/toilettes/{x}/{y}/{xrang}/{yrang}', function ($request, $response, $args) {
-	$wc = getToilettes($args['x'], $args['y'], $args['xrang'], $args['yrang']);
+$app->get('/toilettes/{x}/{y}/{xrang}/{yrang}/{minres}/{maxres}', function ($request, $response, $args) {
+	$wc = getToilettes($args['x'], $args['y'], $args['xrang'], $args['yrang'], $args['minres'], $args['maxres']);
 	$res = json_encode($wc);
 
 	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');

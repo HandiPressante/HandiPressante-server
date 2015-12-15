@@ -49,7 +49,42 @@ function getFiches($id){
 		return null;
 }
 
-function getToilettes($x,$y,$rangx,$rangy){
+
+
+
+function getToilettes($x,$y,$rangx,$rangy,$min,$max){
+	if($rangx < 100)
+		$rangx =100;
+	if($rangy < 100)
+		$rangy =100;
+	$c = 0;
+	for($i = 0 ; $c <= $min ; $i++ ){
+		$tmp = getToilettesRange($x,$y,$rangx,$rangy);
+		$c = count($tmp);
+		$rangx = $rangx * 1.5 ;
+		$rangy = $rangy * 1.5 ;
+		if($rangx > 100000)
+			break;
+	}	
+
+
+	for($i = 0 ; $i < $c ; $i++){
+		$xcentre=$tmp[$i]['x93']-$x;
+		$ycentre=$tmp[$i]['y93']-$y;
+		$tmp[$i]['distance']=sqrt($xcentre * $xcentre +	$ycentre *	$ycentre);
+		}
+
+
+	if( $c > $max)
+		$res = array_slice($res, 0, $max);
+
+	return $res;
+}
+
+
+
+
+function getToilettesRange($x,$y,$rangx,$rangy){
 	$db=connect();
 	$succes=true;
 	$x=(double)$x;
