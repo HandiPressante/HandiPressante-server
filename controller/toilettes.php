@@ -39,7 +39,7 @@ function getFiches($id){
 
 	} catch (PDOException $e) {
 	    echo $e->getMessage();
-		
+		 $succes=false;
 	}
 
 	disconnect($db);
@@ -49,55 +49,103 @@ function getFiches($id){
 		return null;
 }
 
+function distanceWGS84($long1, $lat1, $long2, $lat2){
+
+// en metres.
+// TOdO
+return 250;
 
 
+}
 
-function getToilettes($x,$y,$rangx,$rangy,$min,$max){
-	if($rangx < 100)
-		$rangx =100;
-	if($rangy < 100)
-		$rangy =100;
+function getToilettesListe($long,$lat,$min,$max,$distancemax){
+		$longrang =1.0;
+		$latrang =1.0;
 	$c = 0;
 	for($i = 0 ; $c <= $min ; $i++ ){
-		$tmp = getToilettesRange($x,$y,$rangx,$rangy);
-		$c = count($tmp);
-		$rangx = $rangx * 1.5 ;
-		$rangy = $rangy * 1.5 ;
-		if($rangx > 100000)
+		$res = getToilettesRange($long,$lat,$longrang,$latrang);
+		$c = count($res);
+		$longrang = $longrang * 1.5 ;
+		$latrang = $latrang * 1.5 ;
+		if($longrang > $distancemax)
 			break;
 	}	
 
-
 	for($i = 0 ; $i < $c ; $i++){
-		$xcentre=$tmp[$i]['x93']-$x;
-		$ycentre=$tmp[$i]['y93']-$y;
-		$tmp[$i]['distance']=sqrt($xcentre * $xcentre +	$ycentre *	$ycentre);
+		$res[$i]['distance']= distanceWGS84($long,$lat,$res[$i]['long84'],$res[$i]['lat84']);
 		}
+
+	$id_distance;
+	$sorted;
+	for($i=0 ; $i < $c ; $i++){
+		$id_distance[$i]=$res[$i]['distance'];
+	}
+	
+	asort($id_distance);
+
+	$i=0;
+	foreach ($id_distance as $key => $value){
+		$sorted[$i]=$res[$key];
+		$i++;
+	}
 
 
 	if( $c > $max)
-		$res = array_slice($res, 0, $max);
+		$sorted = array_slice($sorted, 0, $max);
 
-	return $res;
+	return $sorted;
 }
 
 
-
-
-function getToilettesRange($x,$y,$rangx,$rangy){
+function getToilettesFrame($longtopl,$lattopl,$longbotr,$latbotr){
 	$db=connect();
 	$succes=true;
-	$x=(double)$x;
-	$rangx=(double)$rangx;
-	$y=(double)$y;
-	$rangy=(double)$rangy;
+	
+		$longbotr=(double)$longbotr;
+		$longtopl=(double)$longtopl;
+		$lattopl=(double)$lattopl;
+		$latbotr=(double)$latbotr;
 
-	$maxx =	$x + $rangx;
-	$minx = $x - $rangx;
-	$maxy = $y + $rangy;
-	$miny = $y - $rangy;
+		echo $longbotr." ". $longtopl." ". $lattopl." ". $latbotr;
 
-	$sql = "SELECT * FROM toilettes  WHERE x93 < :maxx AND x93 > :minx AND y93 < :maxy AND y93 > :miny";
+	$sql = "SELECT * FROM toilettes WHERE long84 > :xtopl AND lat84 < :ytopl AND long84 < :xbotr AND  lat84 > :ybotr";
+	try {
+		$stmt = $db->prepare($sql);
+
+		$stmt->bindParam(':xbotr', $longbotr);
+		$stmt->bindParam(':xtopl', $longtopl);
+		$stmt->bindParam(':ytopl', $lattopl);
+		$stmt->bindParam(':ybotr', $latbotr);
+
+		$stmt->execute();	
+	
+	} catch (PDOException $e) {
+	    echo $e->getMessage();
+		 $succes=false;
+	}
+
+	disconnect($db);
+	if($succes)
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	else
+		return null;
+}
+
+
+function getToilettesRange($long,$lat,$longrang,$latrang){
+	$db=connect();
+	$succes=true;
+	$long=(double)$long;
+	$longrang=(double)$longrang;
+	$lat=(double)$lat;
+	$latrang=(double)$latrang;
+
+	$maxx =	$long + $longrang;
+	$minx = $long - $longrang;
+	$maxy = $lat + $latrang;
+	$miny = $lat - $latrang;
+
+	$sql = "SELECT * FROM toilettes  WHERE long84 < :maxx AND long84 > :minx AND lat84 < :maxy AND lat84 > :miny";
 	
 	try {
 		$stmt = $db->prepare($sql);
@@ -111,7 +159,60 @@ function getToilettesRange($x,$y,$rangx,$rangy){
 	
 	} catch (PDOException $e) {
 	    echo $e->getMessage();
-		
+		 $succes=false;
+	}
+
+	disconnect($db);
+	if($succes)
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	else
+		return null;
+}
+
+
+function getMemoName($id) {
+	$db=connect();
+    $succes=true;
+	$sql = "SELECT name FROM memos WHERE id = :id";
+	
+	try {
+		$stmt = $db->prepare($sql);
+	
+		$stmt->bindParam(':id', $id);
+
+		$stmt->execute();
+	
+
+
+		$tmp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		$res=$tmp[0]['name'];
+
+	} catch (PDOException $e) {
+	    echo $e->getMessage();
+	    $succes=false;
+	}
+
+	disconnect($db);
+	if($succes)
+		return $res;
+	else
+		return null;
+}
+
+function getMemos() {
+	$db=connect();
+    $succes=true;
+	$sql = "SELECT * FROM memos";
+	
+	try {
+		$stmt = $db->prepare($sql);
+	
+		$stmt->execute();
+	
+	} catch (PDOException $e) {
+	    echo $e->getMessage();
+	    $succes=false;
 	}
 
 	disconnect($db);

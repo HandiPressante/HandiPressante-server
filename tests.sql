@@ -13,3 +13,8 @@ INSERT INTO notes (id_users_notes, id_toilettes_notes,proprete,equipement,access
  VALUES ('3',1,5,5,2);
  INSERT INTO notes (id_users_notes, id_toilettes_notes,proprete,equipement,accessibilite)
  VALUES ('4',1,2,1,3);
+
+INSERT INTO memos(id,name) VALUES (NULL,'memo1.pdf');
+INSERT INTO memos(id,name) VALUES (NULL,'memo2.pdf');
+INSERT INTO memos(id,name) VALUES (NULL,'memo3.pdf');
+INSERT INTO memos(id,name) VALUES (NULL,'memo4.pdf');
