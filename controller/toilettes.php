@@ -51,11 +51,28 @@ function getFiches($id){
 
 function distanceWGS84($long1, $lat1, $long2, $lat2){
 
-// en metres.
-// TOdO
-return 250;
+	$radius = 6371;
 
+	$rad_lat1 = ($lat1 * M_PI) / 180;
+	$rad_long1 = ($long1 * M_PI) / 180;
+	$rad_lat2 = ($lat2 * M_PI) / 180;
+	$rad_long2 = ($long2 * M_PI) / 180;
 
+	$x1 = $radius * cos($rad_lat1) * cos($rad_long1);
+	$y1 = $radius * cos($rad_lat1) * sin($rad_long1);
+	$z1 = $radius * sin($rad_lat1);
+
+	$x2 = $radius * cos($rad_lat2) * cos($rad_long2);
+	$y2 = $radius * cos($rad_lat2) * sin($rad_long2);
+	$z2 = $radius * sin($rad_lat2);
+
+	$dx = $x1 - $x2;
+	$dy = $y1 - $y2;
+	$dz = $z1 - $z2;
+
+	$result_km = sqrt($dx*$dx + $dy*$dy + $dz*$dz);
+
+	return $result_km / 1000;
 }
 
 function getPinsListe($long,$lat,$min,$max,$distancemax){
