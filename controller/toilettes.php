@@ -72,7 +72,7 @@ function distanceWGS84($long1, $lat1, $long2, $lat2){
 
 	$result_km = sqrt($dx*$dx + $dy*$dy + $dz*$dz);
 
-	return $result_km / 1000;
+	return $result_km * 1000;
 }
 
 function getPinsListe($long,$lat,$min,$max,$distancemax){
