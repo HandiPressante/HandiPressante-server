@@ -5,7 +5,11 @@ DROP TABLE IF EXISTS images;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS notes;
 DROP TABLE IF EXISTS memos;
-DROP VIEW IF EXISTS fiches;
+
+DROP VIEW IF EXISTS pinsCarte;
+DROP VIEW IF EXISTS moyennes;
+DROP VIEW IF EXISTS pinsListe;
+
 
 SET foreign_key_checks = 1;
 
@@ -159,16 +163,40 @@ INSERT INTO toilettes(id_toilettes,description,nom,lieu,horaires,pmr,x93,y93,lon
 INSERT INTO toilettes(id_toilettes,description,nom,lieu,horaires,pmr,x93,y93,long84,lat84) VALUES (NULL,NULL,'ZAGREB','Place de Zagreb','Samedi jour de marché',TRUE,'353496.36','6786637.74','-1.65653051','48.08813637');
 
 
-CREATE VIEW fiches (id , nom , description, lieu ,horaire, pmr ,moyenne_proprete,moyenne_equipement,moyenne_accessibilite )
+CREATE VIEW moyennes (id,moyenne_proprete, moyenne_equipement, moyenne_accessibilite )
 AS SELECT id_toilettes,
-t.nom ,
-t.description,
-t.lieu,
-t.horaires,
-t.pmr,
 AVG(proprete),
 AVG(equipement),
 AVG(accessibilite)
 FROM toilettes t, notes n
 WHERE t.id_toilettes=n.id_toilettes_notes
 GROUP BY t.id_toilettes;
+
+CREATE VIEW pinsListe (id , nom , description, lieu ,horaires, pmr,long84, lat84 ,moyenne_proprete,moyenne_equipement,moyenne_accessibilite,moyenne )
+AS SELECT
+t.id_toilettes,
+t.nom,
+t.description,
+t.lieu,
+t.horaires,
+t.pmr,
+t.long84,
+t.lat84,
+m.moyenne_proprete,
+m.moyenne_equipement,
+m.moyenne_accessibilite,
+(m.moyenne_proprete+
+m.moyenne_equipement+
+m.moyenne_accessibilite)/3
+FROM toilettes t LEFT JOIN moyennes m ON t.id_toilettes=m.id;
+
+CREATE VIEW pinsCarte (id , pmr, long84, lat84 ,moyenne)
+AS SELECT t.id_toilettes,
+t.pmr,
+t.long84,
+t.lat84,
+(m.moyenne_proprete+
+m.moyenne_equipement+
+m.moyenne_accessibilite)/3
+FROM toilettes t LEFT JOIN moyennes m ON t.id_toilettes=m.id;
+

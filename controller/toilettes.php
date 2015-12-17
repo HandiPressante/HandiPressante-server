@@ -58,22 +58,45 @@ return 250;
 
 }
 
-function getToilettesListe($long,$lat,$min,$max,$distancemax){
-		$longrang =1.0;
-		$latrang =1.0;
+function getPinsListe($long,$lat,$min,$max,$distancemax){
+	$longrang =1.0;
+	$latrang =1.0;
 	$c = 0;
+	$toFar =false;
+	$restmp=array();
+
 	for($i = 0 ; $c <= $min ; $i++ ){
-		$res = getToilettesRange($long,$lat,$longrang,$latrang);
-		$c = count($res);
+		$restmp = getToilettesRange($long,$lat,$longrang,$latrang);
+		$c = count($restmp);
+		for($i = 0 ; $i < $c ; $i++){
+			$restmp[$i]['distance']= distanceWGS84($long,$lat,$restmp[$i]['long84'],$restmp[$i]['lat84']);
+			if ($restmp[$i]['distance'] > $distancemax ){
+				$toFar=true;
+			}
+		}
 		$longrang = $longrang * 1.5 ;
 		$latrang = $latrang * 1.5 ;
-		if($longrang > $distancemax)
+
+		if($toFar)
 			break;
 	}	
 
-	for($i = 0 ; $i < $c ; $i++){
-		$res[$i]['distance']= distanceWGS84($long,$lat,$res[$i]['long84'],$res[$i]['lat84']);
+	$res=array();
+	$index=0;
+	if($toFar)
+		for($i = 0 ; $i < $c ; $i++ ){
+			if($restmp[$i]['distance'] < $distancemax){
+				$res[$index]=$restmp[$i];
+				$index++;
+			}
 		}
+		else
+
+			$res=$restmp;
+
+	$c=count($res);
+	if($c==0)
+		return null;
 
 	$id_distance;
 	$sorted;
@@ -97,7 +120,7 @@ function getToilettesListe($long,$lat,$min,$max,$distancemax){
 }
 
 
-function getToilettesFrame($longtopl,$lattopl,$longbotr,$latbotr){
+function getPinsCarte($longtopl,$lattopl,$longbotr,$latbotr){
 	$db=connect();
 	$succes=true;
 	
@@ -106,9 +129,9 @@ function getToilettesFrame($longtopl,$lattopl,$longbotr,$latbotr){
 		$lattopl=(double)$lattopl;
 		$latbotr=(double)$latbotr;
 
-		echo $longbotr." ". $longtopl." ". $lattopl." ". $latbotr;
+		echo $longtopl." ". $lattopl." ". $longbotr." ". $latbotr;
 
-	$sql = "SELECT * FROM toilettes WHERE long84 > :xtopl AND lat84 < :ytopl AND long84 < :xbotr AND  lat84 > :ybotr";
+	$sql = "SELECT * FROM pinsCarte WHERE long84 > :xtopl AND lat84 < :ytopl AND long84 < :xbotr AND  lat84 > :ybotr";
 	try {
 		$stmt = $db->prepare($sql);
 
@@ -117,8 +140,9 @@ function getToilettesFrame($longtopl,$lattopl,$longbotr,$latbotr){
 		$stmt->bindParam(':ytopl', $lattopl);
 		$stmt->bindParam(':ybotr', $latbotr);
 
+
 		$stmt->execute();	
-	
+
 	} catch (PDOException $e) {
 	    echo $e->getMessage();
 		 $succes=false;
@@ -145,7 +169,7 @@ function getToilettesRange($long,$lat,$longrang,$latrang){
 	$maxy = $lat + $latrang;
 	$miny = $lat - $latrang;
 
-	$sql = "SELECT * FROM toilettes  WHERE long84 < :maxx AND long84 > :minx AND lat84 < :maxy AND lat84 > :miny";
+	$sql = "SELECT * FROM pinsListe  WHERE long84 < :maxx AND long84 > :minx AND lat84 < :maxy AND lat84 > :miny";
 	
 	try {
 		$stmt = $db->prepare($sql);

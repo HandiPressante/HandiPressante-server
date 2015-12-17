@@ -7,6 +7,7 @@ require_once $config['autoload'];
 $app = new \Slim\App();
 
 
+/*
 $app->get('/toilettes/fiches/{id}', function ($request, $response, $args) {
 	//  http://localhost/handipressante-server/web/api.php/toilettes/fiches/1
 	$wc = getFiches($args['id']);
@@ -15,11 +16,12 @@ $app->get('/toilettes/fiches/{id}', function ($request, $response, $args) {
 	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
 	return $response->write($res);
 });
+*/
 
 // Pour la Liste
 $app->get('/toilettesliste/{long}/{lat}/{min}/{max}/{max_distance}', function ($request, $response, $args) {
 	//	http://localhost/handipressante-server/web/api.php/toilettesliste/-1.68047298/48.11004102/5/5/5000
-	$wc =getToilettesListe($args['long'], $args['lat'], $args['min'], $args['max'], $args['max_distance']);
+	$wc =getPinsListe($args['long'], $args['lat'], $args['min'], $args['max'], $args['max_distance']);
 	$res = json_encode($wc);
 
 	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
@@ -29,7 +31,7 @@ $app->get('/toilettesliste/{long}/{lat}/{min}/{max}/{max_distance}', function ($
 // Pour la carte
 $app->get('/toilettescarte/{toplong}/{toplat}/{botlong}/{botlat}', function ($request, $response, $args) {
 //   http://localhost/handipressante-server/web/api.php/toilettescarte/-10/60/10/40
-	$wc =getToilettesFrame($args['toplong'], $args['toplat'], $args['botlong'], $args['botlat']);
+	$wc =getPinsCarte($args['toplong'], $args['toplat'], $args['botlong'], $args['botlat']);
 	$res = json_encode($wc);
 
 	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');

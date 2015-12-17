@@ -6,7 +6,7 @@ INSERT INTO users (id_users) VALUES ('3');
 INSERT INTO users (id_users) VALUES ('4');
 
 INSERT INTO notes (id_users_notes, id_toilettes_notes,proprete,equipement,accessibilite)
- VALUES ('1',1,3,5,4);
+ VALUES ('1',1,2,5,4);
 INSERT INTO notes (id_users_notes, id_toilettes_notes,proprete,equipement,accessibilite)
  VALUES ('2',1,4,4,4);
 INSERT INTO notes (id_users_notes, id_toilettes_notes,proprete,equipement,accessibilite)
