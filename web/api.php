@@ -18,6 +18,15 @@ $app->get('/toilettes/fiches/{id}', function ($request, $response, $args) {
 });
 */
 
+// Pour les mémos
+$app->get('/memos-update/{last_update}', function ($request, $response, $args) {
+	$memos = getMemos($args['last_update']);
+	$res = json_encode($wc);
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write($res);
+});
+
 // Pour la Liste
 $app->get('/toilettesliste/{long}/{lat}/{min}/{max}/{max_distance}', function ($request, $response, $args) {
 	//	http://localhost/handipressante-server/web/api.php/toilettesliste/-1.68047298/48.11004102/5/5/5000

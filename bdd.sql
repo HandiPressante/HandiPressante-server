@@ -13,10 +13,14 @@ DROP VIEW IF EXISTS pinsListe;
 
 SET foreign_key_checks = 1;
 
-CREATE TABLE memos(
-id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-name VARCHAR(100)
+CREATE TABLE `memos` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(100) NOT NULL,
+  `filename` VARCHAR(100) NOT NULL,
+  `last_update` DATETIME NOT NULL,
+  PRIMARY KEY (`id`)
 );
+
 CREATE TABLE users(
 id_users varchar(50) PRIMARY KEY
 );
