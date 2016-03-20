@@ -7,7 +7,7 @@ function getMemos($last_update)
 	$result = null;
 
 	try {
-		$stmt = $db->prepare('SELECT id, title, filename FROM memos WHERE last_update > :last_update')
+		$stmt = $db->prepare('SELECT id, title, filename FROM memos WHERE last_update > :last_update');
 		$stmt->bindParam(':last_update', $last_update);
 		$stmt->execute();
 		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
