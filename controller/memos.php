@@ -19,6 +19,7 @@ function getMemos($last_update)
 	return $result;
 }
 
+/*
 function getMemoName($id) {
 	$db=connect();
     $succes=true;
@@ -70,5 +71,6 @@ function getMemos() {
 	else
 		return null;
 }
+*/
 
 ?>

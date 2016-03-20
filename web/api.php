@@ -22,7 +22,7 @@ $app->get('/toilettes/fiches/{id}', function ($request, $response, $args) {
 // Pour les mémos
 $app->get('/memos-update/{last_update}', function ($request, $response, $args) {
 	$memos = getMemos($args['last_update']);
-	$res = json_encode($wc);
+	$res = json_encode($memos);
 
 	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
 	return $response->write($res);
