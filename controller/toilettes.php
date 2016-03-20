@@ -148,7 +148,7 @@ function getPinsCarte($longtopl,$lattopl,$longbotr,$latbotr){
 
 		echo $longtopl." ". $lattopl." ". $longbotr." ". $latbotr;
 
-	$sql = "SELECT * FROM pinsCarte WHERE long84 > :xtopl AND lat84 < :ytopl AND long84 < :xbotr AND  lat84 > :ybotr";
+	$sql = "SELECT * FROM pinsListe WHERE long84 > :xtopl AND lat84 < :ytopl AND long84 < :xbotr AND  lat84 > :ybotr";
 	try {
 		$stmt = $db->prepare($sql);
 
