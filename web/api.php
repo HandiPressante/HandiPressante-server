@@ -19,9 +19,17 @@ $app->get('/toilettes/fiches/{id}', function ($request, $response, $args) {
 });
 */
 
+// Pour générer des salts
+$app->get('/memos-salt', function ($request, $response, $args) {
+	$res = json_encode(generateSalt(16));
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write($res);
+});
+
 // Pour les mémos
-$app->get('/memos-update/{last_update}', function ($request, $response, $args) {
-	$memos = getMemos($args['last_update']);
+$app->get('/memos-list', function ($request, $response, $args) {
+	$memos = getMemos();
 	$res = json_encode($memos);
 
 	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
@@ -57,15 +65,7 @@ $app->get('/toilettes/images/{id}', function ($request, $response, $args) {
 	return $response->write($res);
 });
 
-
-$app->get('/memoslist', function ($request, $response, $args) {
- //  http://localhost/handipressante-server/web/api.php/memoslist
-  	$wc = getMemos();
-	$res = json_encode($wc);
-    
-	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
-	return $response->write($res);
-});
+/*
 
 $app->get('/memos/{id}', function ($request, $response, $args) {
 	//   http://localhost/handipressante-server/web/api.php/memos/1
@@ -83,6 +83,7 @@ $response = $response->withHeader('Content-Length', filesize($file));
 
 return $response->write(readfile($file));
 });
+*/
 
 
 

@@ -1,14 +1,13 @@
 <?php
 require_once '../database.php';
 
-function getMemos($last_update)
+function getMemos()
 {
 	$db = connect();
 	$result = null;
 
 	try {
-		$stmt = $db->prepare('SELECT id, title, filename FROM memos WHERE last_update > :last_update');
-		$stmt->bindParam(':last_update', $last_update);
+		$stmt = $db->prepare('SELECT id, title, filename, salt FROM memos');
 		$stmt->execute();
 		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	} catch (PDOException $e) {
@@ -16,6 +15,14 @@ function getMemos($last_update)
 	}
 
 	disconnect($db);
+	return $result;
+}
+
+function generateSalt($size) {
+	$result = "";
+	for ($i=0; $i < $size; $i++) { 
+		$result .= dechex(rand(0, 15));
+	}
 	return $result;
 }
 
