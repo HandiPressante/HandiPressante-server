@@ -7,7 +7,7 @@ function getMemos()
 	$result = null;
 
 	try {
-		$stmt = $db->prepare('SELECT id, title, filename, salt FROM memos');
+		$stmt = $db->prepare('SELECT id, title, filename, salt FROM memos ORDER BY title');
 		$stmt->execute();
 		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	} catch (PDOException $e) {
