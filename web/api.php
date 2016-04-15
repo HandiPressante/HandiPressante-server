@@ -36,6 +36,26 @@ $app->get('/memos-list', function ($request, $response, $args) {
 	return $response->write($res);
 });
 
+// Add toilet
+$app->post('/toilet-add', function ($request, $response, $args) {
+	$uuid = $request->getParsedBody()['uuid'];
+	$toilet_name = $request->getParsedBody()['toilet_name'];
+	$toilet_accessible = $request->getParsedBody()['toilet_accessible'];
+	$toilet_description = $request->getParsedBody()['toilet_description'];
+	$toilet_latitude = $request->getParsedBody()['toilet_latitude'];
+	$toilet_longitude = $request->getParsedBody()['toilet_longitude'];
+
+	$res = addToilet(
+		$toilet_name,
+		$toilet_accessible,
+		$toilet_description,
+		$toilet_latitude,
+		$toilet_longitude);
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write($res);
+});
+
 // Pour la Liste
 $app->get('/toilettesliste/{long}/{lat}/{min}/{max}/{max_distance}', function ($request, $response, $args) {
 	//	http://localhost/handipressante-server/web/api.php/toilettesliste/-1.68047298/48.11004102/5/5/5000

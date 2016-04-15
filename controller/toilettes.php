@@ -1,6 +1,37 @@
 <?php
 require_once '../database.php';
 
+function addToilet($name, $accessible, $description, $latitude, $longitude)
+{
+	$db = connect();
+	$success = true;
+	$error = "";
+
+	$sql = "INSERT INTO toilettes (lieu, pmr, description, lat84, long84) VALUES (:name, :accessible, :description, :latitude, :longitude)";
+
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(":name", $name);
+		$stmt->bindParam(":accessible", $accessible);
+		$stmt->bindParam(":description", $description);
+		$stmt->bindParam(":latitude", $latitude);
+		$stmt->bindParam(":longitude", $longitude);
+
+		if (!$stmt->execute()) {
+			$success = false;
+			$error = $stmt->errorInfo()[2];
+		}
+	} catch (PDOException $e) {
+		$error = $e->getMessage();
+		$success = false;
+	}
+
+	disconnect($db);
+
+	$data = $name . ';' . $accessible . ';' . $description . ';' . $latitude . ';' . $longitude;
+	return json_encode(array('success' => $success, 'error' => $error, 'data' => $data));
+}
+
 function getFiches($id){
 	$db=connect();
 	$succes=true;
