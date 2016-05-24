@@ -382,8 +382,13 @@ function savePhoto($uuid, $toilet_id, $photo) {
     	return ERROR_FILE;
 
     if ($photo->getError() === UPLOAD_ERR_OK) {
+    	$photoDir = 'images/photos/';
+    	if (!file_exists($photoDir)) {
+    		mkdir($photoDir, 0777, true);
+    	}
+
 	    $fileName = 'JPEG_' . date('Ymd_His') . '.jpg';
-	    $photo->moveTo('images/photos/' . $fileName);
+	    $photo->moveTo($photoDir . $fileName);
 	} else {
 		return ERROR_FILE;
 	}
