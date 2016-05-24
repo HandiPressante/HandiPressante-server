@@ -36,6 +36,19 @@ $app->get('/memos-list', function ($request, $response, $args) {
 	return $response->write($res);
 });
 
+// Get one toilet
+$app->get('/toilet/{id}', function ($request, $response, $args) {
+	$toilet = null;
+	$res = getToilet($args['id']);
+
+	if ($res['success']) {
+		$toilet = $res['result'];
+	}
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write(json_encode(array($toilet)));
+});
+
 // Add toilet
 $app->post('/toilet-add', function ($request, $response, $args) {
 	$uuid = $request->getParsedBody()['uuid'];
@@ -54,6 +67,79 @@ $app->post('/toilet-add', function ($request, $response, $args) {
 
 	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
 	return $response->write($res);
+});
+
+// Edit toilet
+$app->post('/toilet-edit', function ($request, $response, $args) {
+	$uuid = $request->getParsedBody()['uuid'];
+	$toilet_id = $request->getParsedBody()['toilet_id'];
+	$toilet_name = $request->getParsedBody()['toilet_name'];
+	$toilet_accessible = $request->getParsedBody()['toilet_accessible'];
+	$toilet_description = $request->getParsedBody()['toilet_description'];
+	$toilet_latitude = $request->getParsedBody()['toilet_latitude'];
+	$toilet_longitude = $request->getParsedBody()['toilet_longitude'];
+
+	$res = editToilet(
+		$toilet_id,
+		$toilet_name,
+		$toilet_accessible,
+		$toilet_description,
+		$toilet_latitude,
+		$toilet_longitude);
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write($res);
+});
+
+// Rate toilet
+$app->post('/toilet-rate', function ($request, $response, $args) {
+	$uuid = $request->getParsedBody()['uuid'];
+	$toilet_id = $request->getParsedBody()['toilet_id'];
+	$toilet_cleanliness = $request->getParsedBody()['toilet_cleanliness'];
+	$toilet_facilities = $request->getParsedBody()['toilet_facilities'];
+	$toilet_accessibility = $request->getParsedBody()['toilet_accessibility'];
+
+	$res = rateToilet(
+		$toilet_id,
+		$uuid,
+		$toilet_cleanliness,
+		$toilet_facilities,
+		$toilet_accessibility);
+
+	if ($res['success']) 
+	{
+		$res = getToilet($toilet_id);
+		
+		if ($res['success']) 
+		{
+			$toilet = $res['result'];
+			$res = array('success' => true, 
+				'toilet_cleanliness' => $toilet['moyenne_proprete'], 
+				'toilet_facilities' => $toilet['moyenne_equipement'], 
+				'toilet_accessibility' => $toilet['moyenne_accessibilite']);
+		}
+	}
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write(json_encode($res));
+});
+
+// Send photo
+$app->post('/toilet-add-photo', function ($request, $response, $args) {
+	$uuid = $request->getParsedBody()['uuid'];
+	$toilet_id = $request->getParsedBody()['toilet_id'];
+	$files = $request->getUploadedFiles();
+
+	$result = array();
+
+	$photo = '';
+	if (isset($files['photo']))
+		$photo = $files['photo'];
+
+    $result['error'] = savePhoto($uuid, $toilet_id, $photo);
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write(json_encode($result));
 });
 
 // Pour la Liste

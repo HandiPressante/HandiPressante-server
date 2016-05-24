@@ -28,8 +28,95 @@ function addToilet($name, $accessible, $description, $latitude, $longitude)
 
 	disconnect($db);
 
-	$data = $name . ';' . $accessible . ';' . $description . ';' . $latitude . ';' . $longitude;
-	return json_encode(array('success' => $success, 'error' => $error, 'data' => $data));
+	return json_encode(array('success' => $success, 'error' => $error));
+}
+
+function editToilet($id, $name, $accessible, $description, $latitude, $longitude)
+{
+	$db = connect();
+	$success = true;
+	$error = "";
+
+	$sql = "UPDATE toilettes SET lieu = :name, pmr = :accessible, description = :description, lat84 = :latitude, long84 = :longitude WHERE id_toilettes = :id";
+
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(":id", $id);
+		$stmt->bindParam(":name", $name);
+		$stmt->bindParam(":accessible", $accessible);
+		$stmt->bindParam(":description", $description);
+		$stmt->bindParam(":latitude", $latitude);
+		$stmt->bindParam(":longitude", $longitude);
+
+		if (!$stmt->execute()) {
+			$success = false;
+			$error = $stmt->errorInfo()[2];
+		}
+	} catch (PDOException $e) {
+		$error = $e->getMessage();
+		$success = false;
+	}
+
+	disconnect($db);
+
+	return json_encode(array('success' => $success, 'error' => $error));
+}
+
+function rateToilet($id, $uuid, $cleanliness, $facilities, $accessibility)
+{
+	$db = connect();
+	$success = true;
+	$error = "";
+
+	if (hasRated($id, $uuid)) {
+		$sql = "UPDATE notes SET proprete = :cleanliness, equipement = :facilities, accessibilite = :accessibility WHERE id_toilettes_notes = :id AND id_users_notes = :uuid";
+	} else {
+		$sql = "INSERT INTO notes (id_toilettes_notes, id_users_notes, proprete, equipement, accessibilite) VALUES (:id, :uuid, :cleanliness, :facilities, :accessibility)";
+	}
+
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(":id", $id);
+		$stmt->bindParam(":uuid", $uuid);
+		$stmt->bindParam(":cleanliness", $cleanliness);
+		$stmt->bindParam(":facilities", $facilities);
+		$stmt->bindParam(":accessibility", $accessibility);
+
+		if (!$stmt->execute()) {
+			$success = false;
+			$error = $stmt->errorInfo()[2];
+		}
+	} catch (PDOException $e) {
+		$error = $e->getMessage();
+		$success = false;
+	}
+
+	disconnect($db);
+
+	return array('success' => $success, 'error' => $error);
+}
+
+function hasRated($id, $uuid) {
+	$db = connect();
+
+	$sql = "SELECT COUNT(*) FROM notes WHERE id_toilettes_notes = :id AND id_users_notes = :uuid";
+
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(":id", $id);
+		$stmt->bindParam(":uuid", $uuid);
+
+		if (!$stmt->execute())
+			return false;
+		
+		$result = $stmt->fetchColumn() > 0;
+	} catch (PDOException $e) {
+		$result = false;
+	}
+
+	disconnect($db);
+
+	return $result;
 }
 
 function getFiches($id){
@@ -85,6 +172,36 @@ function distanceWGS84($long1, $lat1, $long2, $lat2){
 
 	return $result_km * 1000;
 }
+
+function getToilet($id) {
+	$db = connect();
+
+	$success = true;
+	$error = "";
+	$result = null;
+
+	$sql = "SELECT id, lieu, pmr, description, lat84, long84, moyenne_proprete, moyenne_equipement, moyenne_accessibilite FROM pinsListe WHERE id = :id";
+	
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(':id', $id);
+
+		if (!$stmt->execute()) {
+			$success = false;
+			$error = $stmt->errorInfo()[2];
+		} else {
+			$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		}
+	} catch (PDOException $e) {
+		$success = false;
+		$error = $e->getMessage();
+	}
+
+	disconnect($db);
+
+	return array('success' => $success, 'error' => $error, 'result' => $result);
+}
+
 
 function getPinsListe($long,$lat,$min,$max,$distancemax){
 	$longrang =1.0;
@@ -247,5 +364,31 @@ function getImages($id) {
 		return null;
 }
 
+DEFINE ('ERROR_OK', 0);
+DEFINE ('ERROR_UUID', 1);
+DEFINE ('ERROR_TOILET_ID', 2);
+DEFINE ('ERROR_FILE', 3);
+
+function savePhoto($uuid, $toilet_id, $photo) {
+
+	if (empty($uuid))
+    	return ERROR_UUID;
+
+    $tid = (int) $toilet_id;
+	if ($tid == 0)
+    	return ERROR_TOILET_ID;
+
+    if (empty($photo))
+    	return ERROR_FILE;
+
+    if ($photo->getError() === UPLOAD_ERR_OK) {
+	    $fileName = 'JPEG_' . date('Ymd_His') . '.jpg';
+	    $photo->moveTo('images/photos/' . $fileName);
+	} else {
+		return ERROR_FILE;
+	}
+
+	return ERROR_OK;
+}
 
 ?>
