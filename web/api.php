@@ -142,6 +142,17 @@ $app->post('/toilet-add-photo', function ($request, $response, $args) {
 	return $response->write(json_encode($result));
 });
 
+// Get photo list for a given toilet sheet
+$app->get('/toilet-photo-list/{toilet_id}', function ($request, $response, $args) {
+	$toilet_id = (int) $args['toilet_id'];
+
+	$photos = getPhotos($toilet_id);
+	$res = json_encode($photos);
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write($res);
+});
+
 // Pour la Liste
 $app->get('/toilettesliste/{long}/{lat}/{min}/{max}/{max_distance}', function ($request, $response, $args) {
 	//	http://localhost/handipressante-server/web/api.php/toilettesliste/-1.68047298/48.11004102/5/5/5000

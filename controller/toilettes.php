@@ -364,10 +364,42 @@ function getImages($id) {
 		return null;
 }
 
+/*
+ * Add photo
+ */
+
 DEFINE ('ERROR_OK', 0);
 DEFINE ('ERROR_UUID', 1);
 DEFINE ('ERROR_TOILET_ID', 2);
 DEFINE ('ERROR_FILE', 3);
+DEFINE ('ERROR_SQL', 4);
+
+function addPhoto($toilet_id, $uuid, $filename)
+{
+	$db = connect();
+	$success = true;
+
+	$sql = "INSERT INTO photos (toilet_id, user_id, filename, postdate) VALUES (:toilet_id, :uuid, :filename, NOW())";
+
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(':toilet_id', $toilet_id);
+		$stmt->bindParam(':uuid', $uuid);
+		$stmt->bindParam(':filename', $filename);
+
+		if (!$stmt->execute()) {
+			$success = false;
+			//$error = $stmt->errorInfo()[2];
+		}
+	} catch (PDOException $e) {
+		//$error = $e->getMessage();
+		$success = false;
+	}
+
+	disconnect($db);
+
+	return $success;
+}
 
 function savePhoto($uuid, $toilet_id, $photo) {
 
@@ -382,18 +414,41 @@ function savePhoto($uuid, $toilet_id, $photo) {
     	return ERROR_FILE;
 
     if ($photo->getError() === UPLOAD_ERR_OK) {
-    	$photoDir = 'images/photos/';
+    	$photoDir = 'images/photos/' . $toilet_id . '/';
     	if (!file_exists($photoDir)) {
     		mkdir($photoDir, 0777, true);
     	}
 
-	    $fileName = 'JPEG_' . date('Ymd_His') . '.jpg';
-	    $photo->moveTo($photoDir . $fileName);
+	    $filename = 'JPEG_' . date('Ymd_His') . '.jpg';
+	    $photo->moveTo($photoDir . $filename);
+
+	    if (!addPhoto($toilet_id, $uuid, $filename)) {
+	    	unlink($photoDir . $filename);
+	    	return ERROR_SQL;
+	    }
 	} else {
 		return ERROR_FILE;
 	}
 
 	return ERROR_OK;
+}
+
+function getPhotos($toilet_id)
+{
+	$db = connect();
+	$result = null;
+
+	try {
+		$stmt = $db->prepare('SELECT id, toilet_id, user_id, filename, postdate FROM photos WHERE toilet_id = :toilet_id ORDER BY postdate');
+		$stmt->bindParam(':toilet_id', $toilet_id);
+		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	} catch (PDOException $e) {
+	    echo $e->getMessage();
+	}
+
+	disconnect($db);
+	return $result;
 }
 
 ?>
