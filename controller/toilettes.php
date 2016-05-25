@@ -379,7 +379,7 @@ function addPhoto($toilet_id, $uuid, $filename)
 	$db = connect();
 	$success = true;
 
-	$sql = "INSERT INTO photos (toilet_id, user_id, filename, postdate) VALUES (:toilet_id, :uuid, :filename, NOW())";
+	$sql = 'INSERT INTO photos (toilet_id, user_id, filename, postdate) VALUES (:toilet_id, :uuid, :filename, NOW())';
 
 	try {
 		$stmt = $db->prepare($sql);
