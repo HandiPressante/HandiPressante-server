@@ -364,15 +364,19 @@ function getImages($id) {
 		return null;
 }
 
-/*
- * Add photo
- */
 
 DEFINE ('ERROR_OK', 0);
 DEFINE ('ERROR_UUID', 1);
 DEFINE ('ERROR_TOILET_ID', 2);
 DEFINE ('ERROR_FILE', 3);
 DEFINE ('ERROR_SQL', 4);
+DEFINE ('ERROR_USERNAME', 5);
+DEFINE ('ERROR_CONTENT', 6);
+
+/*
+ * Add photo
+ */
+
 
 function addPhoto($toilet_id, $uuid, $filename)
 {
@@ -499,6 +503,59 @@ function getPhotos($toilet_id)
 
 	disconnect($db);
 	return $result;
+}
+
+
+
+/*
+ * Add comment
+ */
+
+function saveComment($uuid, $toilet_id, $username, $content) {
+	if (empty($uuid))
+    	return ERROR_UUID;
+
+    $tid = (int) $toilet_id;
+	if ($tid == 0)
+    	return ERROR_TOILET_ID;
+
+    if (empty($username))
+    	return ERROR_USERNAME;
+
+    if (empty($content))
+    	return ERROR_CONTENT;
+
+    if (!addComment($toilet_id, $uuid, $username, $content))
+    	return ERROR_SQL;
+
+	return ERROR_OK;
+}
+
+function addComment($toilet_id, $uuid, $username, $content)
+{
+	$db = connect();
+	$success = true;
+
+	$sql = 'INSERT INTO comments (toilet_id, user_id, username, content, postdate) VALUES (:toilet_id, :uuid, :username, :content, NOW())';
+
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(':toilet_id', $toilet_id);
+		$stmt->bindParam(':uuid', $uuid);
+		$stmt->bindParam(':username', $username);
+		$stmt->bindParam(':content', $content);
+
+		if (!$stmt->execute()) {
+			$success = false;
+		}
+	} catch (PDOException $e) {
+		//$error = $e->getMessage();
+		$success = false;
+	}
+
+	disconnect($db);
+
+	return $success;
 }
 
 ?>

@@ -142,6 +142,20 @@ $app->post('/toilet-add-photo', function ($request, $response, $args) {
 	return $response->write(json_encode($result));
 });
 
+// Send comment
+$app->post('/toilet-add-comment', function ($request, $response, $args) {
+	$uuid = $request->getParsedBody()['uuid'];
+	$toilet_id = $request->getParsedBody()['toilet_id'];
+	$username = $request->getParsedBody()['username'];
+	$content = $request->getParsedBody()['content'];
+
+	$result = array();
+    $result['error'] = saveComment($uuid, $toilet_id, $username, $content);
+
+	$response = $response->withHeader('Content-type', 'application/json;charset=utf-8');
+	return $response->write(json_encode($result));
+});
+
 // Get photo list for a given toilet sheet
 $app->get('/toilet-photo-list/{toilet_id}', function ($request, $response, $args) {
 	$toilet_id = (int) $args['toilet_id'];
