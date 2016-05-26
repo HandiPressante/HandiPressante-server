@@ -401,8 +401,56 @@ function addPhoto($toilet_id, $uuid, $filename)
 	return $success;
 }
 
-function savePhoto($uuid, $toilet_id, $photo) {
+function removePhoto($photo)
+{
+	$db = connect();
+	$success = true;
 
+	$sql = 'DELETE FROM photos WHERE id = :id';
+
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(':id', $photo['id']);
+
+		if (!$stmt->execute()) {
+			$success = false;
+		}
+	} catch (PDOException $e) {
+		//$error = $e->getMessage();
+		$success = false;
+	}
+
+	disconnect($db);
+
+	if ($success) {
+		$filepath = 'images/photos/' . $photo['toilet_id'] . '/' . $photo['filename'];
+		unlink($filepath);
+	}
+}
+
+function removeOldestPhoto($toilet_id) {
+	$db = connect();
+	$result = null;
+
+	$maxcount = 5;
+
+	$sql = 'SELECT id, toilet_id, filename FROM photos WHERE toilet_id = :toilet_id ORDER BY postdate DESC LIMIT ' . $maxcount . ',100';
+
+	try {
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam(':toilet_id', $toilet_id);
+		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		foreach ($result as $photo) {
+			removePhoto($photo);
+		}
+	} catch (PDOException $e) {
+	    echo $e->getMessage();
+	}
+}
+
+function savePhoto($uuid, $toilet_id, $photo) {
 	if (empty($uuid))
     	return ERROR_UUID;
 
@@ -425,6 +473,8 @@ function savePhoto($uuid, $toilet_id, $photo) {
 	    if (!addPhoto($toilet_id, $uuid, $filename)) {
 	    	unlink($photoDir . $filename);
 	    	return ERROR_SQL;
+	    } else {
+	    	removeOldestPhoto($toilet_id);
 	    }
 	} else {
 		return ERROR_FILE;
