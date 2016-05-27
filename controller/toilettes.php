@@ -558,4 +558,22 @@ function addComment($toilet_id, $uuid, $username, $content)
 	return $success;
 }
 
+function getComments($toilet_id)
+{
+	$db = connect();
+	$result = null;
+
+	try {
+		$stmt = $db->prepare('SELECT id, toilet_id, user_id, username, content, postdate FROM comments WHERE toilet_id = :toilet_id ORDER BY postdate DESC');
+		$stmt->bindParam(':toilet_id', $toilet_id);
+		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	} catch (PDOException $e) {
+	    echo $e->getMessage();
+	}
+
+	disconnect($db);
+	return $result;
+}
+
 ?>
