@@ -54,6 +54,7 @@ $app->post('/toilet-add', function ($request, $response, $args) {
 	$uuid = $request->getParsedBody()['uuid'];
 	$toilet_name = $request->getParsedBody()['toilet_name'];
 	$toilet_accessible = $request->getParsedBody()['toilet_accessible'];
+	$toilet_charged = $request->getParsedBody()['toilet_charged'];
 	$toilet_description = $request->getParsedBody()['toilet_description'];
 	$toilet_latitude = $request->getParsedBody()['toilet_latitude'];
 	$toilet_longitude = $request->getParsedBody()['toilet_longitude'];
@@ -61,6 +62,7 @@ $app->post('/toilet-add', function ($request, $response, $args) {
 	$res = addToilet(
 		$toilet_name,
 		$toilet_accessible,
+		$toilet_charged,
 		$toilet_description,
 		$toilet_latitude,
 		$toilet_longitude);
@@ -75,6 +77,7 @@ $app->post('/toilet-edit', function ($request, $response, $args) {
 	$toilet_id = $request->getParsedBody()['toilet_id'];
 	$toilet_name = $request->getParsedBody()['toilet_name'];
 	$toilet_accessible = $request->getParsedBody()['toilet_accessible'];
+	$toilet_charged = $request->getParsedBody()['toilet_charged'];
 	$toilet_description = $request->getParsedBody()['toilet_description'];
 	$toilet_latitude = $request->getParsedBody()['toilet_latitude'];
 	$toilet_longitude = $request->getParsedBody()['toilet_longitude'];
@@ -83,6 +86,7 @@ $app->post('/toilet-edit', function ($request, $response, $args) {
 		$toilet_id,
 		$toilet_name,
 		$toilet_accessible,
+		$toilet_charged,
 		$toilet_description,
 		$toilet_latitude,
 		$toilet_longitude);
@@ -106,16 +110,16 @@ $app->post('/toilet-rate', function ($request, $response, $args) {
 		$toilet_facilities,
 		$toilet_accessibility);
 
-	if ($res['success']) 
+	if ($res['success'])
 	{
 		$res = getToilet($toilet_id);
-		
-		if ($res['success']) 
+
+		if ($res['success'])
 		{
 			$toilet = $res['result'];
-			$res = array('success' => true, 
-				'toilet_cleanliness' => $toilet['moyenne_proprete'], 
-				'toilet_facilities' => $toilet['moyenne_equipement'], 
+			$res = array('success' => true,
+				'toilet_cleanliness' => $toilet['moyenne_proprete'],
+				'toilet_facilities' => $toilet['moyenne_equipement'],
 				'toilet_accessibility' => $toilet['moyenne_accessibilite']);
 		}
 	}

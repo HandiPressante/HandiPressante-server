@@ -1,18 +1,19 @@
 <?php
 require_once '../database.php';
 
-function addToilet($name, $accessible, $description, $latitude, $longitude)
+function addToilet($name, $accessible, $charged, $description, $latitude, $longitude)
 {
 	$db = connect();
 	$success = true;
 	$error = "";
 
-	$sql = "INSERT INTO toilettes (lieu, pmr, description, lat84, long84) VALUES (:name, :accessible, :description, :latitude, :longitude)";
+	$sql = "INSERT INTO toilettes (lieu, pmr, charged, description, lat84, long84) VALUES (:name, :accessible, :charged, :description, :latitude, :longitude)";
 
 	try {
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam(":name", $name);
 		$stmt->bindParam(":accessible", $accessible);
+		$stmt->bindParam(":charged", $charged);
 		$stmt->bindParam(":description", $description);
 		$stmt->bindParam(":latitude", $latitude);
 		$stmt->bindParam(":longitude", $longitude);
@@ -31,19 +32,20 @@ function addToilet($name, $accessible, $description, $latitude, $longitude)
 	return json_encode(array('success' => $success, 'error' => $error));
 }
 
-function editToilet($id, $name, $accessible, $description, $latitude, $longitude)
+function editToilet($id, $name, $accessible, $charged, $description, $latitude, $longitude)
 {
 	$db = connect();
 	$success = true;
 	$error = "";
 
-	$sql = "UPDATE toilettes SET lieu = :name, pmr = :accessible, description = :description, lat84 = :latitude, long84 = :longitude WHERE id_toilettes = :id";
+	$sql = "UPDATE toilettes SET lieu = :name, pmr = :accessible, charged = :charged, description = :description, lat84 = :latitude, long84 = :longitude WHERE id_toilettes = :id";
 
 	try {
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam(":id", $id);
 		$stmt->bindParam(":name", $name);
 		$stmt->bindParam(":accessible", $accessible);
+		$stmt->bindParam(":charged", $charged);
 		$stmt->bindParam(":description", $description);
 		$stmt->bindParam(":latitude", $latitude);
 		$stmt->bindParam(":longitude", $longitude);
@@ -108,7 +110,7 @@ function hasRated($id, $uuid) {
 
 		if (!$stmt->execute())
 			return false;
-		
+
 		$result = $stmt->fetchColumn() > 0;
 	} catch (PDOException $e) {
 		$result = false;
@@ -127,9 +129,9 @@ function getFiches($id){
 		$stmt = $db->prepare($sql);
 
 		$stmt->bindParam(':id', $id);
-	
+
 		$stmt->execute();
-		
+
 		$tmp = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		$res=$tmp[0];
@@ -180,8 +182,8 @@ function getToilet($id) {
 	$error = "";
 	$result = null;
 
-	$sql = "SELECT id, lieu, pmr, description, lat84, long84, moyenne_proprete, moyenne_equipement, moyenne_accessibilite FROM pinsListe WHERE id = :id";
-	
+	$sql = "SELECT id, lieu, pmr, charged, description, lat84, long84, moyenne_proprete, moyenne_equipement, moyenne_accessibilite FROM pinsListe WHERE id = :id";
+
 	try {
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam(':id', $id);
@@ -224,7 +226,7 @@ function getPinsListe($long,$lat,$min,$max,$distancemax){
 
 		if($toFar)
 			break;
-	}	
+	}
 
 	$res=array();
 	$index=0;
@@ -248,7 +250,7 @@ function getPinsListe($long,$lat,$min,$max,$distancemax){
 	for($i=0 ; $i < $c ; $i++){
 		$id_distance[$i]=$res[$i]['distance'];
 	}
-	
+
 	asort($id_distance);
 
 	$i=0;
@@ -268,7 +270,7 @@ function getPinsListe($long,$lat,$min,$max,$distancemax){
 function getPinsCarte($longtopl,$lattopl,$longbotr,$latbotr){
 	$db=connect();
 	$succes=true;
-	
+
 		$longbotr=(double)$longbotr;
 		$longtopl=(double)$longtopl;
 		$lattopl=(double)$lattopl;
@@ -286,7 +288,7 @@ function getPinsCarte($longtopl,$lattopl,$longbotr,$latbotr){
 		$stmt->bindParam(':ybotr', $latbotr);
 
 
-		$stmt->execute();	
+		$stmt->execute();
 
 	} catch (PDOException $e) {
 	    echo $e->getMessage();
@@ -315,7 +317,7 @@ function getToilettesRange($long,$lat,$longrang,$latrang){
 	$miny = $lat - $latrang;
 
 	$sql = "SELECT * FROM pinsListe  WHERE long84 < :maxx AND long84 > :minx AND lat84 < :maxy AND lat84 > :miny";
-	
+
 	try {
 		$stmt = $db->prepare($sql);
 
@@ -324,8 +326,8 @@ function getToilettesRange($long,$lat,$longrang,$latrang){
 		$stmt->bindParam(':maxy', $maxy);
 		$stmt->bindParam(':miny', $miny);
 
-		$stmt->execute();	
-	
+		$stmt->execute();
+
 	} catch (PDOException $e) {
 	    echo $e->getMessage();
 		 $succes=false;
@@ -344,14 +346,14 @@ function getImages($id) {
 	$db=connect();
     $succes=true;
 	$sql = "SELECT image FROM images  WHERE id_images = :id ";
-	
+
 	try {
 		$stmt = $db->prepare($sql);
 
 		$stmt->bindParam(':id', $id);
-	
+
 		$stmt->execute();
-	
+
 	} catch (PDOException $e) {
 	    echo $e->getMessage();
 	    $succes=false;
