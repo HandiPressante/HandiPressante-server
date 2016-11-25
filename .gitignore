@@ -1,6 +1,6 @@
-/src/setting.php
+!/src/settings.php
 /vendor/
 /logs/*
-/cache/*
 !/logs/README.md
+/cache/twig/*
 !/cache/twig/.keepme
