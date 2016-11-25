@@ -1,7 +1,0 @@
-<?php
-$config['autoload'] = __DIR__ . '/vendor/autoload.php';
-$config['memos'] = __DIR__ . '/memos/';
-$config['database']['dbname'] = 'handipressante'; 
-$config['database']['user'] = 'handipressante';
-$config['database']['pass'] = '';
-?>

@@ -1,3 +1,1 @@
-# HandiPressante-server
-
-http://www.slimframework.com/
+# HandiPressante - Web server

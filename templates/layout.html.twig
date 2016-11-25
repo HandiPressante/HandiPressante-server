@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+        <link rel="favicon icon" href="/assets/images/favicon.png" />
+        <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico" />
+		<title>Administration - HandiPressante</title>
+
+		<!-- CSS  -->
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link href="/assets/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
+		<link href="/assets/css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+	</head>
+
+	<body>
+		<header>
+			<nav class="top-nav red accent-4">
+				<div class="container">
+					<div class="nav-wrapper">
+						<span class="page-title">{% block pagetitle %}{% endblock %}</span>
+					</div>
+				</div>
+			</nav>
+
+			<div class="container">
+				<a href="#" data-activates="nav-mobile" class="button-collapse top-nav full hide-on-large-only"><i class="material-icons">menu</i></a>
+			</div>
+
+			<ul id="nav-mobile" class="side-nav fixed">
+				<li class="logo">
+					<a id="logo-container" class="brand-logo" href="http://www.handipressante.fr">
+						<img id="front-page-logo" src="/assets/images/logo_handipressante.png" alt="HandiPressante" />
+					</a>
+				</li>
+
+				<li><div class="divider"></div></li>
+
+				{% if isUserAuthenticated() %}
+					<li class="bold"><a class="waves-effect waves-teal" href="/admin/logout">Se déconnecter</a>	</li>
+
+					<li><div class="divider"></div></li>
+
+					<li class="bold"><a class="waves-effect waves-teal" href="/admin">Tableau de bord</a></li>
+					<li class="bold"><a class="waves-effect waves-teal" href="/admin/moderate">Modérer</a></li>
+					<li class="bold"><a href="/admin/stats">Voir les statistiques</a></li>
+				{% endif %}
+			</ul>
+		</header>
+
+		<main>
+			<div class="container">
+				{% block content %}{% endblock %}
+			</div>
+		</main>
+
+		<!--  Scripts-->
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script src="/assets/js/bin/materialize.js"></script>
+		<script src="/assets/js/bin/init.js"></script>
+	</body>
+</html>

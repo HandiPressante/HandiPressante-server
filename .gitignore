@@ -1,5 +1,6 @@
-/config.inc.php
-/vendor
-/composer.lock
-/cache
-/web/images/photos
+/src/setting.php
+/vendor/
+/logs/*
+/cache/*
+!/logs/README.md
+!/cache/twig/.keepme

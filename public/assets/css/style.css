@@ -1,0 +1,49 @@
+header, main {
+	padding-left: 300px;
+}
+
+@media only screen and (max-width: 992px) {
+	header, main {
+		padding-left: 0;
+	}
+}
+
+nav.top-nav {
+	box-shadow: none;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+nav.top-nav .page-title {
+	font-size: 32px;
+	line-height: 64px;
+}
+
+a.button-collapse.top-nav.full {
+	line-height: 64px;
+}
+
+a.button-collapse.top-nav {
+	width: 48px;
+	color: #fff;
+	font-size: 36px;
+	text-align: center;
+
+	float: none;
+	position: absolute;
+	left: 7.5%;
+	top: 0;
+
+	margin-left: 1.5rem;
+	z-index: 2;
+}
+
+li.logo {
+	text-align: center;
+}
+
+#logo-container {
+	height: 175px;
+	margin-top: 10px;
+	margin-bottom: 32px;
+}
