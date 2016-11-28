@@ -57,3 +57,8 @@ $container['pdo'] = function ($c) {
 
     return $pdo;
 };
+
+// csrf
+$container['csrf'] = function ($c) {
+    return new \Slim\Csrf\Guard;
+};

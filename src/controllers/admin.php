@@ -39,12 +39,32 @@ $app->get('/admin/manage-access', function ($request, $response, $args) {
     $stmt->execute();
     $admins = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-    return $this->renderer->render($response, 'manage-access.html.twig', array('admins' => $admins));
-});
+    // CSRF Token
+    $nameKey = $this->csrf->getTokenNameKey();
+    $valueKey = $this->csrf->getTokenValueKey();
+    $token = [
+        'nameKey' => $nameKey,
+        'valueKey' => $valueKey,
+        'name' => $request->getAttribute($nameKey),
+        'value' => $request->getAttribute($valueKey)
+    ];
+
+    return $this->renderer->render($response, 'manage-access.html.twig', array('admins' => $admins, 'token' => $token));
+})->add($app->getContainer()->get('csrf'));
 
 $app->get('/admin/add-access', function ($request, $response, $args) {
-    return $this->renderer->render($response, 'add-access.html.twig');
-});
+    // CSRF Token
+    $nameKey = $this->csrf->getTokenNameKey();
+    $valueKey = $this->csrf->getTokenValueKey();
+    $token = [
+        'nameKey' => $nameKey,
+        'valueKey' => $valueKey,
+        'name' => $request->getAttribute($nameKey),
+        'value' => $request->getAttribute($valueKey)
+    ];
+
+    return $this->renderer->render($response, 'add-access.html.twig', array('token' => $token));
+})->add($app->getContainer()->get('csrf'));
 
 $app->post('/admin/add-access', function ($request, $response) {
     $data = $request->getParsedBody();
@@ -82,5 +102,15 @@ $app->post('/admin/add-access', function ($request, $response) {
         $error = 'Veuillez entrer une adresse e-mail valide.';
     }
 
-    return $this->renderer->render($response, 'add-access.html.twig', array('error' => $error, 'email' => $signup['email']));
-});
+    // CSRF Token
+    $nameKey = $this->csrf->getTokenNameKey();
+    $valueKey = $this->csrf->getTokenValueKey();
+    $token = [
+        'nameKey' => $nameKey,
+        'valueKey' => $valueKey,
+        'name' => $request->getAttribute($nameKey),
+        'value' => $request->getAttribute($valueKey)
+    ];
+
+    return $this->renderer->render($response, 'add-access.html.twig', array('error' => $error, 'email' => $signup['email'], 'token' => $token));
+})->add($app->getContainer()->get('csrf'));
