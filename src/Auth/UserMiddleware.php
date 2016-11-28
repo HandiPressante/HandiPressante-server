@@ -5,14 +5,11 @@
  * https://github.com/tuupola/slim-basic-auth
  */
 
-//require_once 'User.php';
-
 namespace Auth;
 
-use Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
-use Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
-use Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
+require_once 'User.php';
+require_once 'RequestMethodRule.php';
+require_once 'RequestPathRule.php';
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

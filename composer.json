@@ -16,7 +16,6 @@
         "slim/slim": "^3.1",
         "slim/twig-view": "^2.0",
         "monolog/monolog": "^1.17",
-        "tuupola/slim-basic-auth": "^2.2",
         "akrabat/rka-slim-session-middleware": "^2.0"
     },
     "require-dev": {
