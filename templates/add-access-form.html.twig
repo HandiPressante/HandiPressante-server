@@ -1,0 +1,23 @@
+<form class="col s12" method="post" action="/admin/add-access">
+	<div class="row">
+		<div class="input-field col s12 m4 l12">
+			<input type="email" id="email" name="email" class="validate" {% if email is defined %}value="{{ email }}"{% endif %} />
+			<label for="email">Adresse e-mail :</label>
+		</div>
+
+		<div class="input-field col s6 m3 l6">
+			<input type="password" id="password" name="password" class="validate" />
+			<label for="password">Mot de passe :</label>
+		</div>
+
+		<div class="input-field col s6 m5 l6">
+			<input type="password" id="password-confirm" name="password-confirm" class="validate" />
+			<label for="password-confirm">Confirmer le mot de passe :</label>
+		</div>
+	</div>
+
+	<button class="btn waves-effect waves-light" type="submit" name="login">
+		Ajouter
+		<i class="material-icons right">add</i>
+	</button>
+</form>
