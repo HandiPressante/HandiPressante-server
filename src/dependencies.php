@@ -58,6 +58,17 @@ $container['pdo'] = function ($c) {
     return $pdo;
 };
 
+// mailer
+$container['mailer'] = function ($c) {
+    $settings = $c->get('settings')['mailer'];
+
+    $transport = Swift_SmtpTransport::newInstance($settings['host'], $settings['port'], $settings['encryption'])
+        ->setUsername($settings['username'])
+        ->setPassword($settings['password']);
+
+    return Swift_Mailer::newInstance($transport);
+};
+
 // csrf
 $container['csrf'] = function ($c) {
     return new \Slim\Csrf\Guard;

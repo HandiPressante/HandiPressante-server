@@ -27,5 +27,14 @@ return [
             'user' => 'root',
             'pass' => '',
         ],
+
+        // Mailer settings
+        'mailer' => [
+            'host' => 'smtp.server.net',
+            'port' => 587,
+            'encryption' => 'tls',
+            'username' => 'username',
+            'password' => 'password',
+        ],
     ],
 ];
