@@ -9,6 +9,6 @@ $app->add(new \RKA\SessionMiddleware([
 
 $app->add(new \Auth\UserMiddleware([
 	"path" => "/admin",
-	"passthrough" => "/admin/login",
+	"passthrough" => ["/admin/login", "/admin/require-password-reset", "/admin/set-password"],
 	"login" => "/admin/login"
 ]));
