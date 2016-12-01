@@ -204,6 +204,11 @@ function isPasswordTokenValid($pdo, $id, $token, &$error) {
 }
 
 $app->get('/admin/set-password/{id}-{password_token}', function ($request, $response, $args) {
+    $user = new \Auth\User();
+    if ($user->isAuthenticated()) {
+        $user->logout();
+    }
+
     $id = (int)$args['id'];
     $passwordToken = filter_var($args['password_token'], FILTER_SANITIZE_STRING);
 
@@ -214,6 +219,11 @@ $app->get('/admin/set-password/{id}-{password_token}', function ($request, $resp
 });
 
 $app->post('/admin/set-password', function ($request, $response) {
+    $user = new \Auth\User();
+    if ($user->isAuthenticated()) {
+        $user->logout();
+    }
+
     $data = $request->getParsedBody();
     
     $id = (int)$data['id'];
