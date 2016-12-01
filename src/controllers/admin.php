@@ -4,6 +4,7 @@ require_once __DIR__ . '/../Auth/User.php';
 $app->get('/admin/login', function ($request, $response, $args) {
     $user = new \Auth\User();
     if ($user->isAuthenticated()) {
+        $this->flash->addMessage('Info', 'Déjà connecté(e).');
         return $response->withRedirect("/admin");
     }
 
@@ -13,6 +14,7 @@ $app->get('/admin/login', function ($request, $response, $args) {
 $app->post('/admin/login', function ($request, $response) {
     $user = new \Auth\User();
     if ($user->isAuthenticated()) {
+        $this->flash->addMessage('Info', 'Déjà connecté(e).');
         return $response->withRedirect("/admin");
     }
 
@@ -24,6 +26,7 @@ $app->post('/admin/login', function ($request, $response) {
     $success = $user->authenticate($login_data['email'], $login_data['password'], $this->pdo);
 
     if ($success) {
+        $this->flash->addMessage('Success', 'Connecté(e) avec succès.');
         return $response->withRedirect("/admin");
     }
 
@@ -34,6 +37,7 @@ $app->get('/admin/logout', function ($request, $response, $args) {
     $user = new \Auth\User();
     $user->logout();
 
+    $this->flash->addMessage('Success', 'Déconnecté(e) avec succès.');
     return $response->withRedirect("/admin/login");
 });
 
@@ -102,6 +106,7 @@ $app->post('/admin/add-access', function ($request, $response) {
                 ->setBody($accountCreationEmail);
 
             if ($this->mailer->send($message)) {
+                $this->flash->addMessage('Success', 'Compte créé avec succès, un mail automatique a été envoyé à la personne concernée.');
                 return $response->withRedirect("/admin/manage-access");
             } else {
                 $error = 'Une erreur a eu lieu lors de l\'envoi du mail de création du compte, veuillez réessayer ultérieurement.';
@@ -148,7 +153,7 @@ $app->get('/admin/remove-access/{id}', function ($request, $response, $args) {
 
         return $this->renderer->render($response, 'remove-access.html.twig', array('id' => $id, 'email' => $admin['email'], 'token' => $token));
     } else {
-        // error : account not exists
+        $this->flash->addMessage('Error', 'Ce compte n\'existe pas.');
         return $response->withRedirect('/admin/manage-access');
     }
 })->add($app->getContainer()->get('csrf'));
@@ -161,6 +166,7 @@ $app->post('/admin/remove-access', function ($request, $response) {
     $stmt->bindParam(':id', $id);
     $stmt->execute();
 
+    $this->flash->addMessage('Success', 'Le compte a été supprimé avec succès.');
     return $response->withRedirect('/admin/manage-access');
 })->add($app->getContainer()->get('csrf'));
 
@@ -245,8 +251,8 @@ $app->post('/admin/set-password', function ($request, $response) {
                 $stmt->bindParam(':pass_hash', password_hash($password, PASSWORD_BCRYPT));
                 $stmt->bindParam(':id', $id);
                 $stmt->execute();
-                print('PassHash updated');
 
+                $this->flash->addMessage('Success', 'Votre mot de passe a bien été mis à jour.');
                 return $response->withRedirect("/admin/login");
             } else {
                 $error = 'Le mot de passe doit contenir au moins 8 caractères.';
