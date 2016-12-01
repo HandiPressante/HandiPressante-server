@@ -68,24 +68,36 @@ $app->get('/admin/add-access', function ($request, $response, $args) {
 
 $app->post('/admin/add-access', function ($request, $response) {
     $data = $request->getParsedBody();
-    $signup = [];
-    $signup['email'] = filter_var($data['email'], FILTER_SANITIZE_STRING);
+    $email = filter_var($data['email'], FILTER_SANITIZE_STRING);
 
     $error = '';
-    if (filter_var($signup['email'], FILTER_VALIDATE_EMAIL)) {
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM admins WHERE email = :email');
-        $stmt->bindParam(':email', $signup['email']);
+        $stmt->bindParam(':email', $email);
         $stmt->execute();
         $count = $stmt->fetchColumn();
 
         if ($count == 0) {
             $stmt = $this->pdo->prepare('INSERT INTO admins (email) VALUES (:email)');
-            $stmt->bindParam(':email', $signup['email']);
+            $stmt->bindParam(':email', $email);
             $stmt->execute();
 
-            // todo : set token and send mail
+            $id = $this->pdo->lastInsertId();
+            $passwordToken = requirePasswordReset($this->pdo, $id);
 
-            return $response->withRedirect("/admin/manage-access");
+            $accountCreationEmail = $this->renderer->fetch('emails/account-creation.txt.twig', ['id' => $id, 'passwordToken' => $passwordToken]);
+
+            $message = Swift_Message::newInstance('Création de vos identifiants d\'administration')
+                ->setFrom(array('no-reply@handipressante.fr' => 'HandiPressante'))
+                ->setTo(array($email))
+                ->setBody($accountCreationEmail);
+
+            if ($this->mailer->send($message)) {
+                return $response->withRedirect("/admin/manage-access");
+            } else {
+                $error = 'Une erreur a eu lieu lors de l\'envoi du mail de création du compte, veuillez réessayer ultérieurement.';
+            }
+
         } else {
             $error = 'Cette adresse e-mail est déjà utilisée.';
         }
@@ -103,10 +115,28 @@ $app->post('/admin/add-access', function ($request, $response) {
         'value' => $request->getAttribute($valueKey)
     ];
 
-    return $this->renderer->render($response, 'add-access.html.twig', array('error' => $error, 'email' => $signup['email'], 'token' => $token));
+    return $this->renderer->render($response, 'add-access.html.twig', array('error' => $error, 'email' => $email, 'token' => $token));
 })->add($app->getContainer()->get('csrf'));
 
-function checkPasswordToken($pdo, $id, $token) {
+
+/*
+ * Re-setting password feature
+ */
+
+function requirePasswordReset($pdo, $id) {
+    $token = bin2hex(random_bytes(32));
+    $tokenTimestamp = time();
+
+    $stmt = $pdo->prepare('UPDATE admins SET token = :token, token_timestamp = :token_timestamp WHERE id = :id');
+    $stmt->bindParam(":token", $token);
+    $stmt->bindParam(":token_timestamp", $tokenTimestamp);
+    $stmt->bindParam(":id", $id);
+    $stmt->execute();
+
+    return $token;
+}
+
+function isPasswordTokenValid($pdo, $id, $token, &$error) {
     $stmt = $pdo->prepare('SELECT token, token_timestamp FROM admins WHERE id = :id LIMIT 1');
     $stmt->bindParam(":id", $id);
     $stmt->execute();
@@ -117,7 +147,7 @@ function checkPasswordToken($pdo, $id, $token) {
         $elapsedTime = time() - $admin['token_timestamp'];
 
         if (strlen($admin['token']) > 0 && $admin['token'] == $token && $elapsedTime <= $maxValidity) {
-            // should return true
+            return true;
         } else {
             $error = 'Désolé, le jeton d\'initialisation du mot de passe n\'est plus valide. <br /><a href="/admin/require-password-reset">Cliquez ici</a> pour recevoir un nouveau jeton par mail.';
         }
@@ -125,15 +155,15 @@ function checkPasswordToken($pdo, $id, $token) {
         $error = 'Ce compte n\'existe pas.';
     }
 
-    return '';
+    return false;
 }
 
 $app->get('/admin/set-password/{id}-{password_token}', function ($request, $response, $args) {
     $id = (int)$args['id'];
     $passwordToken = filter_var($args['password_token'], FILTER_SANITIZE_STRING);
 
-    $error = checkPasswordToken($this->pdo, $id, $passwordToken);
-    $printForm = empty($error);
+    $error = '';
+    $printForm = isPasswordTokenValid($this->pdo, $id, $passwordToken, $error);
 
     return $this->renderer->render($response, 'set-password.html.twig', array('id' => $id, 'password_token' => $passwordToken, 'error' => $error, 'printForm' => $printForm));
 });
@@ -143,19 +173,24 @@ $app->post('/admin/set-password', function ($request, $response) {
     
     $id = (int)$data['id'];
     $token = filter_var($data['password_token'], FILTER_SANITIZE_STRING);
-    $error = checkPasswordToken($this->pdo, $id, $token); // todo : checkPassword should return a boolean (for clarity)
+    
+    $error = '';
     $printForm = false;
 
-    if (empty($error)) {
+    if (isPasswordTokenValid($this->pdo, $id, $token, $error)) {
+        print('Token Valid');
         $password = filter_var($data['password'], FILTER_SANITIZE_STRING);
         $passwordConfirm = filter_var($data['password-confirm'], FILTER_SANITIZE_STRING);
 
         if ($password == $passwordConfirm) {
+            print('PassOK1');
             if (strlen($password) >= 8) {
+                print('PassOK2');
                 $stmt = $this->pdo->prepare('UPDATE admins SET pass_hash = :pass_hash, token = NULL, token_timestamp = NULL WHERE id = :id');
                 $stmt->bindParam(':pass_hash', password_hash($password, PASSWORD_BCRYPT));
                 $stmt->bindParam(':id', $id);
                 $stmt->execute();
+                print('PassHash updated');
 
                 return $response->withRedirect("/admin/login");
             } else {
@@ -190,23 +225,19 @@ $app->post('/admin/require-password-reset', function ($request, $response) {
         $stmt->execute();
 
         if ($admin = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $token = bin2hex(random_bytes(32));
-            $tokenTimestamp = time();
+            $token = requirePasswordReset($this->pdo, $admin['id']);
 
-            $stmt = $this->pdo->prepare('UPDATE admins SET token = :token, token_timestamp = :token_timestamp WHERE id = :id');
-            $stmt->bindParam(":token", $token);
-            $stmt->bindParam(":token_timestamp", $tokenTimestamp);
-            $stmt->bindParam(":id", $admin['id']);
-            $stmt->execute();
-
-            $resetEmail = 'Lien de réinitialisation de votre mot de passe : http://api.handipressante.fr/admin/set-password/' . $admin['id'] . '-' . $token;
+            $passwordResetEmail = $this->renderer->fetch('emails/password-reset.txt.twig', ['id' => $admin['id'], 'token' => $token]);
 
             $message = Swift_Message::newInstance('Réinitialisation du mot de passe')
                 ->setFrom(array('no-reply@handipressante.fr' => 'HandiPressante'))
                 ->setTo(array($email))
-                ->setBody($resetEmail);
+                ->setBody($passwordResetEmail);
 
-            $result = $this->mailer->send($message);
+            if (!$this->mailer->send($message)) {
+                $sent = false;
+                $error = 'Une erreur a eu lieu lors de l\'envoi du mail de réinitialisation, veuillez réessayer ultérieurement.';
+            }
         }
     } else {
         $error = 'L\'adresse que vous avez entré n\'est pas une adresse e-mail valide.';
