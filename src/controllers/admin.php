@@ -128,6 +128,42 @@ $app->post('/admin/add-access', function ($request, $response) {
 })->add($app->getContainer()->get('csrf'));
 
 
+$app->get('/admin/remove-access/{id}', function ($request, $response, $args) {
+    $id = (int)$args['id'];
+
+    $stmt = $this->pdo->prepare('SELECT email FROM admins WHERE id = :id');
+    $stmt->bindParam(":id", $id);
+    $stmt->execute();
+
+    if ($admin = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        // CSRF Token
+        $nameKey = $this->csrf->getTokenNameKey();
+        $valueKey = $this->csrf->getTokenValueKey();
+        $token = [
+            'nameKey' => $nameKey,
+            'valueKey' => $valueKey,
+            'name' => $request->getAttribute($nameKey),
+            'value' => $request->getAttribute($valueKey)
+        ];
+
+        return $this->renderer->render($response, 'remove-access.html.twig', array('id' => $id, 'email' => $admin['email'], 'token' => $token));
+    } else {
+        // error : account not exists
+        return $response->withRedirect('/admin/manage-access');
+    }
+})->add($app->getContainer()->get('csrf'));
+
+$app->post('/admin/remove-access', function ($request, $response) {
+    $data = $request->getParsedBody();
+    $id = (int)$data['id'];
+
+    $stmt = $this->pdo->prepare('DELETE FROM admins WHERE id = :id');
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+
+    return $response->withRedirect('/admin/manage-access');
+})->add($app->getContainer()->get('csrf'));
+
 /*
  * Re-setting password feature
  */
