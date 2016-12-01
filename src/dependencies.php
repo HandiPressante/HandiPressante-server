@@ -22,8 +22,23 @@ $container['renderer'] = function ($c) {
         return $user->isAuthenticated();
     });
     $view->getEnvironment()->addFunction($isUserAuthenticated);
+
+    $getFlashMessages = new Twig_SimpleFunction('flash', function ($tag = null) {
+        $flash = new Slim\Flash\Messages();
+        if (null !== $tag) {
+            return $flash->getMessage($tag);
+        }
+
+        return $flash->getMessages();
+    });
+    $view->getEnvironment()->addFunction($getFlashMessages);
     
     return $view;
+};
+
+// flash messages
+$container['flash'] = function ($c) {
+    return new Slim\Flash\Messages();
 };
 
 // json renderer

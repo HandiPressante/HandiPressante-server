@@ -59,5 +59,31 @@
 		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 		<script src="/assets/js/bin/materialize.js"></script>
 		<script src="/assets/js/bin/init.js"></script>
+
+		<script type="text/javascript">
+			(function($){
+				$(function(){
+					{% for tag,messages in flash() %}
+						{% if tag == 'Success' %}
+							{% for message in messages %}
+								Materialize.toast('<span class="green-text text-lighten-2">{{ message }}</span>', 4000);
+							{% endfor %}
+						{% elseif tag == 'Error' %}
+							{% for message in messages %}
+								Materialize.toast('<span class="red-text text-lighten-2">{{ message }}</span>', 4000);
+							{% endfor %}
+						{% elseif tag == 'Info' %}
+							{% for message in messages %}
+								Materialize.toast('<span class="blue-text text-lighten-2">{{ message }}</span>', 4000);
+							{% endfor %}
+						{% else %}
+							{% for message in messages %}
+								Materialize.toast('{{ message }}', 4000);
+							{% endfor %}
+						{% endif %}
+					{% endfor %}
+				});
+			})(jQuery);
+		</script>
 	</body>
 </html>
