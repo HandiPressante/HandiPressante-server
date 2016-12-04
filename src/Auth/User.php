@@ -1,6 +1,7 @@
 <?php
+namespace App\Auth;
 
-namespace Auth;
+use App\Library\AccessRepository;
 
 final class User
 {
@@ -15,20 +16,13 @@ final class User
 	}
 
 	public function authenticate($email, $password, $pdo) {
-		$stmt = $pdo->prepare('SELECT id, pass_hash, lastlogin_date, lastlogin_ip FROM admins WHERE email = :email LIMIT 1');
-		$stmt->bindParam(":email", $email);
-		$stmt->execute();
+		$repo = new AccessRepository($pdo);
+		$admin = $repo->getByEmail($email, true);
 
-		$admin = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-		if (!$admin)
-			return false;
+		if (!$admin) return false;
 
 		if (password_verify($password, $admin['pass_hash'])) {
-			$stmt = $pdo->prepare('UPDATE admins SET lastlogin_date = NOW(), lastlogin_ip = :ip WHERE id = :id');
-			$stmt->bindParam(":ip", $_SERVER['REMOTE_ADDR']);
-			$stmt->bindParam(":id", $admin['id']);
-			$stmt->execute();
+			$repo->updateLastLogin($admin['id']);
 
 			$this->session->set('email', $admin['email']);
 			if ($admin['lastlogin_date'] != null)

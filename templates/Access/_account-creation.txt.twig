@@ -1,0 +1,6 @@
+Bonjour, vous avez désormais accès à l'interface d'administration de l'application HandiPressante.
+
+Veuillez commencer par définir un nouveau mot de passe en cliquant sur le lien suivant : {{ base_url() ~ path_for('admin_setpassword', {'id': id, 'token': passwordToken}) }}
+Attention : ce lien n'est valable que pendant 48 heures, une fois cette période écoulée, vous devrez passer par la demande de réinitialisation de mot de passe : {{ base_url() ~ path_for('admin_passwordreset') }}
+
+Vous pourrez alors vous connecter à l'interface d'administration via cette adresse : {{ base_url() ~ path_for('admin_login') }}

@@ -1,4 +1,4 @@
-<form class="col s12" method="post" action="/admin/add-access">
+<form class="col s12" method="post" action="{{ path_for('access_add') }}">
 	<div class="row">
 		<div class="input-field col s12 m4 l12">
 			<input type="email" id="email" name="email" class="validate" {% if email is defined %}value="{{ email }}"{% endif %} />

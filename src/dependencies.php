@@ -1,12 +1,10 @@
 <?php
-require_once 'Auth/User.php';
-
 // DIC configuration
 
 $container = $app->getContainer();
 
 // view renderer
-$container['renderer'] = function ($c) {
+$container['view'] = function ($c) {
     $settings = $c->get('settings')['renderer'];
     $view = new Slim\Views\Twig($settings['template_path'], $settings['twig']);
 
@@ -18,7 +16,7 @@ $container['renderer'] = function ($c) {
     //$view->getEnvironment()->addGlobal('is_user_authenticated', $user->isAuthenticated());
 
     $isUserAuthenticated = new Twig_SimpleFunction('isUserAuthenticated', function () {
-        $user = new \Auth\User();
+        $user = new \App\Auth\User();
         return $user->isAuthenticated();
     });
     $view->getEnvironment()->addFunction($isUserAuthenticated);

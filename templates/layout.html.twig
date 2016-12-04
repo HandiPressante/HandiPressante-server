@@ -37,14 +37,14 @@
 				<li><div class="divider"></div></li>
 
 				{% if isUserAuthenticated() %}
-					<li class="bold"><a class="waves-effect waves-teal" href="/admin/logout">Se déconnecter</a>	</li>
+					<li class="bold"><a class="waves-effect waves-teal" href="{{ path_for('admin_logout') }}">Se déconnecter</a>	</li>
 
 					<li><div class="divider"></div></li>
 
-					<li class="bold"><a class="waves-effect waves-teal" href="/admin">Tableau de bord</a></li>
-					<li class="bold"><a class="waves-effect waves-teal" href="/admin/manage-access">Gérer les accès</a></li>
-					<li class="bold"><a class="waves-effect waves-teal" href="/admin/moderate">Modérer</a></li>
-					<li class="bold"><a href="/admin/stats">Voir les statistiques</a></li>
+					<li class="bold"><a class="waves-effect waves-teal" href="{{ path_for('admin_index') }}">Tableau de bord</a></li>
+					<li class="bold"><a class="waves-effect waves-teal" href="{{ path_for('access_manage') }}">Gérer les accès</a></li>
+					<li class="bold"><a class="waves-effect waves-teal" href="#">Modérer</a></li>
+					<li class="bold"><a href="#">Voir les statistiques</a></li>
 				{% endif %}
 			</ul>
 		</header>

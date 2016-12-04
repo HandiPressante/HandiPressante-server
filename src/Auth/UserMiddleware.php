@@ -1,15 +1,10 @@
 <?php
-
 /*
  * Inspired by tuupola's work on slim-basic-auth
  * https://github.com/tuupola/slim-basic-auth
  */
 
-namespace Auth;
-
-require_once 'User.php';
-require_once 'RequestMethodRule.php';
-require_once 'RequestPathRule.php';
+namespace App\Auth;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -17,13 +12,13 @@ use Psr\Http\Message\ResponseInterface;
 final class UserMiddleware
 {
     private $rules;
-    private $options = array(
+    private $options = [
         "path" => null,
         "passthrough" => null,
         "login" => "/login"
-    );
+    ];
 
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         /* Setup stack for rules */
         $this->rules = new \SplStack;
@@ -33,9 +28,9 @@ final class UserMiddleware
 
         /* If nothing was passed in options add default rules. */
         if (!isset($options["rules"])) {
-            $this->addRule(new RequestMethodRule(array(
-                "passthrough" => array("OPTIONS")
-            )));
+            $this->addRule(new RequestMethodRule([
+                "passthrough" => ["OPTIONS"]
+            ]));
         }
 
         /* If path was given in easy mode add rule for it. */
@@ -67,12 +62,12 @@ final class UserMiddleware
         return $next($request, $response);
     }
 
-    private function hydrate($data = array())
+    private function hydrate($data = [])
     {
         foreach ($data as $key => $value) {
             $method = "set" . ucfirst($key);
             if (method_exists($this, $method)) {
-                call_user_func(array($this, $method), $value);
+                call_user_func([$this, $method], $value);
             }
         }
     }

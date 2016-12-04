@@ -3,7 +3,7 @@
 {% block pagetitle %}Supprimer un accès{% endblock %}
 
 {% block content %}
-	<form class="col s12" method="post" action="/admin/remove-access">
+	<form class="col s12" method="post" action="{{ path_for('access_remove_confirm') }}">
 		<input type="hidden" name="id" value="{{ id }}" />
 		<input type="hidden" name="{{ token.nameKey }}" value="{{ token.name }}" />
 		<input type="hidden" name="{{ token.valueKey }}" value="{{ token.value }}" />
@@ -15,7 +15,7 @@
 
 		<div class="row">
 			<div class="input-field col">
-				<a href="/admin/manage-access" class="waves-effect waves-light btn">Annuler</a>
+				<a href="{{ path_for('access_manage') }}" class="waves-effect waves-light btn">Annuler</a>
 			</div>
 
 			<div class="input-field col">

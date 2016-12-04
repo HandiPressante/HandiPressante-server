@@ -10,7 +10,7 @@
 					<span class="card-title">Ajouter un administrateur</span>
 
 					<div class="row">
-						{% include 'add-access-form.html.twig' %}
+						{% include 'Access/_add-form.html.twig' %}
 					</div>
 				</div>
 			</div>
@@ -23,7 +23,7 @@
 				<li class="collection-header"><h4>Administrateurs</h4></li>
 
 				{% for a in admins %}
-					<li class="collection-item"><div>{{ a.email }}<a href="/admin/remove-access/{{ a.id }}" class="secondary-content"><i class="material-icons red-text">clear</i></a></div></li>
+					<li class="collection-item"><div>{{ a.email }}<a href="{{ path_for('access_remove', {'id': a.id}) }}" class="secondary-content"><i class="material-icons red-text">clear</i></a></div></li>
 				{% endfor %}
 			</ul>
 		</div>

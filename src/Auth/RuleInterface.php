@@ -11,7 +11,7 @@
  *   https://github.com/tuupola/slim-basic-auth
  *
  */
-namespace Auth;
+namespace App\Auth;
 use Psr\Http\Message\RequestInterface;
 interface RuleInterface
 {

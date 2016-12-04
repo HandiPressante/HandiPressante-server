@@ -11,9 +11,7 @@
  *   https://github.com/tuupola/slim-basic-auth
  *
  */
-namespace Auth;
-
-require_once 'RuleInterface.php';
+namespace App\Auth;
 
 use Psr\Http\Message\RequestInterface;
 class RequestPathRule implements RuleInterface
