@@ -4,3 +4,5 @@
 /cache/twig/*
 !/cache/twig/.keepme
 /src/settings.php
+/public/memos/*
+!/public/memos/.keepme
