@@ -58,8 +58,7 @@ $app->group('/admin', function () {
 		->setName('access_add')
 		->add($this->getContainer()->get('csrf'));
 
-
-		$this->get('/remove-{id}', AccessController::class . ':remove')
+		$this->get('/remove-{id:[0-9]+}', AccessController::class . ':remove')
 		->setName('access_remove')
 		->add($this->getContainer()->get('csrf'));
 
