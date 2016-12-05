@@ -86,3 +86,10 @@ $container['mailer'] = function ($c) {
 $container['csrf'] = function ($c) {
     return new \Slim\Csrf\Guard;
 };
+
+// errors
+$container['notFoundHandler'] = function ($c) {
+    return function ($request, $response) use ($c) {
+        return $c->get('view')->render($response, 'errors/404.html.twig')->withStatus(404);
+    };
+};
