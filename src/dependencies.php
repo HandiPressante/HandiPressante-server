@@ -84,7 +84,14 @@ $container['mailer'] = function ($c) {
 
 // csrf
 $container['csrf'] = function ($c) {
-    return new \Slim\Csrf\Guard;
+    $guard = new \Slim\Csrf\Guard;
+
+    $guard->setFailureCallable(function ($request, $response, $next) use ($c) {
+        $c->get('flash')->addMessage('Error', 'Session du formulaire expirée.');
+        return $response->withRedirect($c->get('router')->pathFor('admin_index'));
+    });
+
+    return $guard;
 };
 
 // errors
