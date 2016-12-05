@@ -1,0 +1,21 @@
+{% extends 'layout.html.twig' %}
+
+{% block pagetitle %}Ajouter un mémo médical{% endblock %}
+
+{% block content %}
+	{% if error is defined %}
+		<div class="row">
+			<div class="col s12 m10 l8">
+				<div class="card">
+					<div class="card-content red-text">
+						<p>
+							{{ error }}
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{% include 'Memo/_add-form.html.twig' %}
+{% endblock %}

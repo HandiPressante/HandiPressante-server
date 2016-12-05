@@ -1,0 +1,28 @@
+<form class="col s12" method="post" action="{{ path_for('memo_add') }}" enctype="multipart/form-data">
+	<div class="row">
+		<div class="input-field col s12">
+			<input type="text" id="title" name="title" class="validate" {% if title is defined %}value="{{ title }}"{% endif %} />
+			<label for="title">Titre :</label>
+		</div>
+
+		<div class="file-field input-field col s12">
+			<div class="btn">
+				<input type="hidden" name="MAX_FILE_SIZE" value="1048576" /> 
+				<input type="file" id="file" name="file" accept=".pdf" />
+				<span>Mémo médical (PDF)</span>
+			</div>
+
+			<div class="file-path-wrapper">
+				<input type="text" class="file-path validate" />
+			</div>
+		</div>
+	</div>
+
+	<input type="hidden" name="{{ token.nameKey }}" value="{{ token.name }}" />
+	<input type="hidden" name="{{ token.valueKey }}" value="{{ token.value }}" />
+
+	<button class="btn waves-effect waves-light right" type="submit" name="add">
+		Ajouter
+		<i class="material-icons right">add</i>
+	</button>
+</form>

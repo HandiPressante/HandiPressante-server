@@ -68,4 +68,25 @@ $app->group('/admin', function () {
 
 	});
 
+
+	$this->group('/memo', function() {
+
+		$this->get('/manage', MemoController::class . ':manage')
+		->setName('memo_manage')
+		->add($this->getContainer()->get('csrf'));
+
+		$this->map(['GET', 'POST'], '/add', MemoController::class . ':add')
+		->setName('memo_add')
+		->add($this->getContainer()->get('csrf'));
+
+		$this->get('/remove-{id:[0-9]+}', MemoController::class . ':remove')
+		->setName('memo_remove')
+		->add($this->getContainer()->get('csrf'));
+
+		$this->post('/remove-confirm', MemoController::class . ':removeConfirm')
+		->setName('memo_remove_confirm')
+		->add($this->getContainer()->get('csrf'));
+
+	});
+
 });
