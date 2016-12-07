@@ -23,7 +23,13 @@
 				<li class="collection-header"><h4>Mémos medicaux</h4></li>
 
 				{% for m in memo_list %}
-					<li class="collection-item"><div>{{ m.title }}<a href="{{ path_for('memo_remove', {'id': m.id}) }}" class="secondary-content"><i class="material-icons red-text">clear</i></a></div></li>
+					<li class="collection-item">
+						<div>
+							{{ m.title }}
+							<a href="{{ path_for('memo_remove', {'id': m.id}) }}" class="secondary-content"><i class="material-icons red-text">clear</i></a>
+							<a href="/memos/{{ m.filename }}" class="secondary-content"><i class="material-icons">description</i></a>
+						</div>
+					</li>
 				{% endfor %}
 			</ul>
 		</div>
