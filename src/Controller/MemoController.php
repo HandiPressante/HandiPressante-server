@@ -1,13 +1,16 @@
 <?php
 namespace App\Controller;
 
+use App\Library\ApiSuccessResponse;
+
 class MemoController extends Controller {
 
 	public function list($request, $response, $args) {
 		$repo = $this->getRepository('Memo');
 		$memoList = $repo->getAll();
 
-		return $this->ci->json->render($response, $memoList);
+		$apiResponse = new ApiSuccessResponse($memoList);
+		return $this->ci->json->render($response, $apiResponse->toArray());
 	}
 
 	public function manage($request, $response, $args) {
