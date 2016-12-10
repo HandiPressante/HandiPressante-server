@@ -10,8 +10,8 @@ class Controller {
 		$this->ci = $ci;
 	}
 
-	protected function pathFor($name) {
-		return $this->ci->router->pathFor($name);
+	protected function pathFor($name, $args = []) {
+		return $this->ci->router->pathFor($name, $args);
 	}
 
 	protected function getRepository($name) {
