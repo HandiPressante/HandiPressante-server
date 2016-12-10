@@ -42,6 +42,27 @@ class ToiletController extends Controller {
 		return $this->ci->json->render($response, $apiResponse->toArray());
 	}
 
+	public function getArea($request, $response, $args) {
+		$northWestLat = (double) $args['lat_nw'];
+		$northWestLong = (double) $args['long_nw'];
+		$southEastLat = (double) $args['lat_se'];
+		$southEastLong = (double) $args['long_se'];
+
+		if ($this->validateLatLong($northWestLat, $northWestLong) &&
+			$this->validateLatLong($southEastLat, $southEastLong))
+		{
+			$repo = $this->getRepository('Toilet');
+			$toilets = $repo->getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong);
+			$apiResponse = new ApiSuccessResponse($toilets);
+		}
+		else
+		{
+			$apiResponse = new ApiErrorResponse("Requête invalide.");
+		}
+
+		return $this->ci->json->render($response, $apiResponse->toArray());
+	}
+
 	private function validateLatLong($lat, $long) {
 		return ($lat >= -90) && ($lat <= 90) && ($long >= -180) && ($long <= 180);
 	}

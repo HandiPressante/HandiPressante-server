@@ -83,6 +83,20 @@ class ToiletRepository extends Repository {
 		return array_slice($candidateToilets, 0, $validCount);
 	}
 
+	public function getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong) {
+		$query = 'SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg, global_avg 
+				FROM toilets WHERE (lat84 >= :latMin AND lat84 <= :latMax) AND (long84 >= :longMin AND long84 <= :longMax)';
+
+		$stmt = $this->pdo->prepare($query);
+		$stmt->bindParam(':latMin', $southEastLat);
+		$stmt->bindParam(':latMax', $northWestLat);
+		$stmt->bindParam(':longMin', $northWestLong);
+		$stmt->bindParam(':longMax', $southEastLong);
+		$stmt->execute();
+
+		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+	}
+
 	private function distanceWGS84($lat1, $long1, $lat2, $long2) {
 		$radius = 6371;
 
