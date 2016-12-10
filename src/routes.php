@@ -14,6 +14,7 @@ $app->get('/', function ($request, $response, $args) {
 $app->group('/toilets', function () {
 
 	$this->get('/get-{id:[0-9]+}', ToiletController::class . ':get');
+	$this->get('/get-nearby/{lat}/{long}/{mincount}/{maxcount}/{maxdistance}', ToiletController::class . ':getNearby');
 
 });
 
