@@ -15,6 +15,7 @@ class ApiResponse {
 	public function toArray()
 	{
 		return [
+			'version' => 1,
 			'success' => $this->success,
 			'errorText' => $this->errorText,
 			'data' => $this->data
