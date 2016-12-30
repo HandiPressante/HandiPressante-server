@@ -17,6 +17,7 @@ $app->group('/toilets', function () {
 	$this->get('/get-nearby/{lat}/{long}/{mincount}/{maxcount}/{maxdistance}', ToiletController::class . ':getNearby');
 	$this->get('/get-area/{lat_nw}/{long_nw}/{lat_se}/{long_se}', ToiletController::class . ':getArea');
 
+	$this->post('/save', ToiletController::class . ':save');
 });
 
 
