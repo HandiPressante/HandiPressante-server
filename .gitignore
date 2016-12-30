@@ -6,3 +6,5 @@
 /src/settings.php
 /public/memos/*
 !/public/memos/.keepme
+/public/pictures/*
+!/public/pictures/.keepme
