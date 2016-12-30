@@ -1,5 +1,6 @@
 <?php
 use \App\Controller\ToiletController;
+use \App\Controller\CommentController;
 use \App\Controller\MemoController;
 use \App\Controller\AdminController;
 use \App\Controller\AccessController;
@@ -18,6 +19,12 @@ $app->group('/toilets', function () {
 	$this->get('/get-area/{lat_nw}/{long_nw}/{lat_se}/{long_se}', ToiletController::class . ':getArea');
 
 	$this->post('/save', ToiletController::class . ':save');
+
+	$this->group('/comments', function () {
+
+		$this->get('/list-{id:[0-9]+}', CommentController::class . ':list');
+
+	});
 });
 
 
