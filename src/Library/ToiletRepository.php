@@ -97,6 +97,38 @@ class ToiletRepository extends Repository {
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
+	public function add($name, $adapted, $charged, $description, $latitude, $longitude, $addedBy) {
+		$zero = 0;
+
+		$stmt = $this->pdo->prepare('INSERT INTO toilets_data (name, adapted, charged, description, lat84, long84, added_by) VALUES (:name, :adapted, :charged, :description, :latitude, :longitude, :addedBy)');
+		$stmt->bindParam(':name', $name);
+		$stmt->bindParam(":adapted", $adapted);
+		$stmt->bindParam(":charged", $charged);
+		$stmt->bindParam(":description", $addedBy);
+		$stmt->bindParam(":latitude", $latitude);
+		$stmt->bindParam(":longitude", $longitude);
+		$stmt->bindParam(":addedBy", $zero);
+		return $stmt->execute();
+	}
+
+	public function update($id, $name, $adapted, $charged, $description, $latitude, $longitude) {
+		$stmt = $this->pdo->prepare('UPDATE toilets_data SET name = :name, adapted = :adapted, charged = :charged, description = :description, lat84 = :latitude, long84 = :longitude WHERE id = :id');
+		$stmt->bindParam(':name', $name);
+		$stmt->bindParam(":adapted", $adapted);
+		$stmt->bindParam(":charged", $charged);
+		$stmt->bindParam(":description", $description);
+		$stmt->bindParam(":latitude", $latitude);
+		$stmt->bindParam(":longitude", $longitude);
+		$stmt->bindParam(":id", $id);
+		return $stmt->execute();
+	}
+
+	public function remove($id) {
+		$stmt = $this->pdo->prepare('DELETE FROM toilets_data WHERE id = :id');
+		$stmt->bindParam(':id', $id);
+		$stmt->execute();
+	}
+
 	private function distanceWGS84($lat1, $long1, $lat2, $long2) {
 		$radius = 6371;
 
