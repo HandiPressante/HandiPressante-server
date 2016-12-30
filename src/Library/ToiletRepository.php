@@ -4,7 +4,7 @@ namespace App\Library;
 class ToiletRepository extends Repository {
 
 	public function get($id) {
-		$stmt = $this->pdo->prepare('SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg FROM toilets WHERE id = :id');
+		$stmt = $this->pdo->prepare('SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight FROM toilets WHERE id = :id');
 		$stmt->bindParam(":id", $id);
 		$stmt->execute();
 
@@ -27,7 +27,7 @@ class ToiletRepository extends Repository {
 			$onMeridian = true;
 		}
 
-		$query = 'SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg 
+		$query = 'SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
 				FROM toilets WHERE (lat84 >= :latMin AND lat84 <= :latMax) AND ';
 
 		if ($onMeridian) {
@@ -84,7 +84,7 @@ class ToiletRepository extends Repository {
 	}
 
 	public function getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong) {
-		$query = 'SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg 
+		$query = 'SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
 				FROM toilets WHERE (lat84 >= :latMin AND lat84 <= :latMax) AND (long84 >= :longMin AND long84 <= :longMax)';
 
 		$stmt = $this->pdo->prepare($query);
