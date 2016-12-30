@@ -24,6 +24,7 @@ $app->group('/toilets', function () {
 	$this->group('/comments', function () {
 
 		$this->get('/list-{id:[0-9]+}', CommentController::class . ':list');
+		$this->post('/add', CommentController::class . ':add');
 
 	});
 
