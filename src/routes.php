@@ -1,6 +1,7 @@
 <?php
 use \App\Controller\ToiletController;
 use \App\Controller\CommentController;
+use \App\Controller\PictureController;
 use \App\Controller\MemoController;
 use \App\Controller\AdminController;
 use \App\Controller\AccessController;
@@ -23,6 +24,12 @@ $app->group('/toilets', function () {
 	$this->group('/comments', function () {
 
 		$this->get('/list-{id:[0-9]+}', CommentController::class . ':list');
+
+	});
+
+	$this->group('/pictures', function () {
+
+		$this->get('/list-{id:[0-9]+}', PictureController::class . ':list');
 
 	});
 });
