@@ -11,6 +11,15 @@ class ToiletRepository extends Repository {
 		return $stmt->fetch(\PDO::FETCH_ASSOC);
 	}
 
+	public function exists($id) {
+		$stmt = $this->pdo->prepare('SELECT COUNT(*) as count FROM toilets WHERE id = :id');
+		$stmt->bindParam(":id", $id);
+		$stmt->execute();
+
+		$result = $stmt->fetch(\PDO::FETCH_ASSOC);
+		return $result['count'] > 0;
+	}
+
 	public function getInRange($lat, $long, $latRange, $longRange) {
 		$latMin = max(-90, $lat - $latRange);
 		$latMax = min(90, $lat + $latRange);
