@@ -98,16 +98,14 @@ class ToiletRepository extends Repository {
 	}
 
 	public function add($name, $adapted, $charged, $description, $latitude, $longitude, $addedBy) {
-		$zero = 0;
-
 		$stmt = $this->pdo->prepare('INSERT INTO toilets_data (name, adapted, charged, description, lat84, long84, added_by) VALUES (:name, :adapted, :charged, :description, :latitude, :longitude, :addedBy)');
 		$stmt->bindParam(':name', $name);
 		$stmt->bindParam(":adapted", $adapted);
 		$stmt->bindParam(":charged", $charged);
-		$stmt->bindParam(":description", $addedBy);
+		$stmt->bindParam(":description", $description);
 		$stmt->bindParam(":latitude", $latitude);
 		$stmt->bindParam(":longitude", $longitude);
-		$stmt->bindParam(":addedBy", $zero);
+		$stmt->bindParam(":addedBy", $addedBy);
 		return $stmt->execute();
 	}
 

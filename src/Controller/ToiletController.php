@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Library\ApiSuccessResponse;
 use App\Library\ApiErrorResponse;
+use App\Library\ApiUserId;
 
 class ToiletController extends Controller {
 
@@ -66,7 +67,7 @@ class ToiletController extends Controller {
 	public function save($request, $response) {
 		$data = $request->getParsedBody();
 
-		if (!isset($data['uuid']) || 
+		if (!isset($data['user_id']) || 
 			!isset($data['toilet_name']) ||
 			!isset($data['toilet_adapted']) ||
 			!isset($data['toilet_charged']) ||
@@ -78,7 +79,13 @@ class ToiletController extends Controller {
 			return $this->ci->json->render($response, $apiResponse->toArray());
 		}
 
-		$uuid = strtolower(filter_var($data['uuid'], FILTER_SANITIZE_STRING));
+
+		$userId = new ApiUserId(filter_var($data['user_id'], FILTER_SANITIZE_STRING));
+		if (!$userId->isValid())
+		{
+			$apiResponse = new ApiErrorResponse('Identifiant invalide, essayez de redémarrer l\'application.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
 		
 		$name = filter_var($data['toilet_name'], FILTER_SANITIZE_STRING);
 		$adapted = (bool) $data['toilet_adapted'];
@@ -87,8 +94,7 @@ class ToiletController extends Controller {
 		$latitude = (double) $data['toilet_latitude'];
 		$longitude = (double) $data['toilet_longitude'];
 
-		if (empty($uuid) || // todo : check uuid format with regexp
-			empty($name) || (strlen($name) > 40) ||
+		if (empty($name) || (strlen($name) > 40) ||
 			!$this->validateLatLong($latitude, $longitude))
 		{
 			$apiResponse = new ApiErrorResponse('Requête invalide.');
@@ -106,7 +112,7 @@ class ToiletController extends Controller {
 		}
 		else
 		{
-			$success = $repo->add($name, $adapted, $charged, $description, $latitude, $longitude, $uuid);
+			$success = $repo->add($name, $adapted, $charged, $description, $latitude, $longitude, $userId->toString());
 		}
 
 		if ($success) {
