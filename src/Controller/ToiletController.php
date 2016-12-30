@@ -36,7 +36,7 @@ class ToiletController extends Controller {
 		}
 		else
 		{
-			$apiResponse = new ApiErrorResponse("Requête invalide.");
+			$apiResponse = new ApiErrorResponse('Requête invalide.');
 		}
 
 		return $this->ci->json->render($response, $apiResponse->toArray());
@@ -57,7 +57,7 @@ class ToiletController extends Controller {
 		}
 		else
 		{
-			$apiResponse = new ApiErrorResponse("Requête invalide.");
+			$apiResponse = new ApiErrorResponse('Requête invalide.');
 		}
 
 		return $this->ci->json->render($response, $apiResponse->toArray());
@@ -119,6 +119,6 @@ class ToiletController extends Controller {
 	}
 
 	private function validateLatLong($lat, $long) {
-		return ($lat >= -90) && ($lat <= 90) && ($long >= -180) && ($long <= 180);
+		return ($lat >= -90.0) && ($lat <= 90.0) && ($long >= -180.0) && ($long <= 180.0);
 	}
 };
