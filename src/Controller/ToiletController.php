@@ -12,7 +12,7 @@ class ToiletController extends Controller {
 		$repo = $this->getRepository('Toilet');
 		$toilet = $repo->get($id);
 
-		if ($toilet) $apiResponse = new ApiSuccessResponse($toilet);
+		if ($toilet) $apiResponse = new ApiSuccessResponse([$toilet]);
 		else $apiResponse = new ApiErrorResponse("Ces toilettes n'existent pas.");
 
 		return $this->ci->json->render($response, $apiResponse->toArray());
