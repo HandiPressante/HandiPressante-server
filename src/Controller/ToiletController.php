@@ -64,6 +64,59 @@ class ToiletController extends Controller {
 		return $this->ci->json->render($response, $apiResponse->toArray());
 	}
 
+	public function rate($request, $response) {
+		$data = $request->getParsedBody();
+
+		if (!isset($data['user_id']) || 
+			!isset($data['toilet_id']) ||
+			!isset($data['toilet_cleanliness']) ||
+			!isset($data['toilet_facilities']) ||
+			!isset($data['toilet_accessibility']))
+		{
+			$apiResponse = new ApiErrorResponse('Requête invalide.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+
+
+		$userId = new ApiUserId(filter_var($data['user_id'], FILTER_SANITIZE_STRING));
+		if (!$userId->isValid())
+		{
+			$apiResponse = new ApiErrorResponse('Identifiant invalide, essayez de redémarrer l\'application.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+		
+		
+		$toiletId = (int) $data['toilet_id'];
+		$cleanlinessRate = (int) $data['toilet_cleanliness'];
+		$facilitiesRate = (int) $data['toilet_facilities'];
+		$accessibilityRate = (int) $data['toilet_accessibility'];
+
+		$repo = $this->getRepository('Toilet');
+
+		if (!$repo->exists($toiletId) ||
+			$cleanlinessRate < 0 || $cleanlinessRate > 5 ||
+			$facilitiesRate < 0 || $facilitiesRate > 5 ||
+			$accessibilityRate < 0 || $accessibilityRate > 5)
+		{
+			$apiResponse = new ApiErrorResponse('Requête invalide.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+
+		if ($repo->hasAlreadyRated($userId->toString(), $toiletId)) {
+			$success = $repo->updateToiletRate($toiletId, $userId->toString(), $cleanlinessRate, $facilitiesRate, $accessibilityRate);
+		} else {
+			$success = $repo->addToiletRate($toiletId, $userId->toString(), $cleanlinessRate, $facilitiesRate, $accessibilityRate);
+		}
+
+		if ($success) {
+			$apiResponse = new ApiSuccessResponse();
+		} else {
+			$apiResponse = new ApiErrorResponse('Enregistrement impossible.');
+		}
+
+		return $this->ci->json->render($response, $apiResponse->toArray());
+	}
+
 	public function save($request, $response) {
 		$data = $request->getParsedBody();
 

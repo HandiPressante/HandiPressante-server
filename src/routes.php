@@ -20,6 +20,7 @@ $app->group('/toilets', function () {
 	$this->get('/get-area/{lat_nw}/{long_nw}/{lat_se}/{long_se}', ToiletController::class . ':getArea');
 
 	$this->post('/save', ToiletController::class . ':save');
+	$this->post('/rate', ToiletController::class . ':rate');
 
 	$this->group('/comments', function () {
 

@@ -136,6 +136,38 @@ class ToiletRepository extends Repository {
 		$stmt->execute();
 	}
 
+
+	public function hasAlreadyRated($userId, $toiletId) {
+		$stmt = $this->pdo->prepare('SELECT COUNT(*) as count FROM rates WHERE toilet_id = :toilet_id AND user_id = :user_id');
+		$stmt->bindParam(":toilet_id", $toiletId);
+		$stmt->bindParam(":user_id", $userId);
+		$stmt->execute();
+
+		$result = $stmt->fetch(\PDO::FETCH_ASSOC);
+		return $result['count'] > 0;
+	}
+
+	public function addToiletRate($toiletId, $userId, $cleanlinessRate, $facilitiesRate, $accessibilityRate) {
+		$stmt = $this->pdo->prepare('INSERT INTO rates (toilet_id, user_id, cleanliness, facilities, accessibility) VALUES (:toilet_id, :user_id, :cleanliness, :facilities, :accessibility)');
+		$stmt->bindParam(':toilet_id', $toiletId);
+		$stmt->bindParam(":user_id", $userId);
+		$stmt->bindParam(":cleanliness", $cleanlinessRate);
+		$stmt->bindParam(":facilities", $facilitiesRate);
+		$stmt->bindParam(":accessibility", $accessibilityRate);
+		return $stmt->execute();
+	}
+
+	public function updateToiletRate($toiletId, $userId, $cleanlinessRate, $facilitiesRate, $accessibilityRate) {
+		$stmt = $this->pdo->prepare('UPDATE rates SET cleanliness = :cleanliness, facilities = :facilities, accessibility = :accessibility WHERE toilet_id = :toilet_id AND user_id = :user_id');
+		$stmt->bindParam(':cleanliness', $cleanlinessRate);
+		$stmt->bindParam(":facilities", $facilitiesRate);
+		$stmt->bindParam(":accessibility", $accessibilityRate);
+		$stmt->bindParam(":toilet_id", $toiletId);
+		$stmt->bindParam(":user_id", $userId);
+		return $stmt->execute();
+	}
+
+
 	private function distanceWGS84($lat1, $long1, $lat2, $long2) {
 		$radius = 6371;
 
