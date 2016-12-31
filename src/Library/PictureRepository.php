@@ -11,9 +11,10 @@ class PictureRepository extends Repository {
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
-	public function add($toiletId, $filename) {
-		$stmt = $this->pdo->prepare('INSERT INTO pictures (toilet_id, filename, postdate) VALUES (:toilet_id, :filename, NOW())');
+	public function add($toiletId, $userId, $filename) {
+		$stmt = $this->pdo->prepare('INSERT INTO pictures (toilet_id, user_id, filename, postdate) VALUES (:toilet_id, :user_id, :filename, NOW())');
 		$stmt->bindParam(':toilet_id', $toiletId);
+		$stmt->bindParam(':user_id', $userId);
 		$stmt->bindParam(":filename", $filename);
 		return $stmt->execute();
 	}

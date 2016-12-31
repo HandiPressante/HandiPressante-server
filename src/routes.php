@@ -32,6 +32,7 @@ $app->group('/toilets', function () {
 	$this->group('/pictures', function () {
 
 		$this->get('/list-{id:[0-9]+}', PictureController::class . ':list');
+		$this->post('/add', PictureController::class . ':add');
 
 	});
 });
