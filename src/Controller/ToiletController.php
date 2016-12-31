@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Library\ApiSuccessResponse;
 use App\Library\ApiErrorResponse;
 use App\Library\ApiUserId;
+use App\Library\ToiletRepository;
 
 class ToiletController extends Controller {
 
@@ -25,14 +26,18 @@ class ToiletController extends Controller {
 		$mincount = (int) $args['mincount'];
 		$maxcount = (int) $args['maxcount'];
 		$maxdistance = (int) $args['maxdistance'];
+		$accessibilityFilter = (int) $args['accessibility_filter'];
+		$feeFilter = (int) $args['fee_filter'];
 
 		if ($this->validateLatLong($lat, $long) &&
 			$mincount > 0 &&
 			$maxcount > 0 &&
-			$maxdistance > 0)
+			$maxdistance > 0 &&
+			in_array($accessibilityFilter, ToiletRepository::ACCESSIBILITY_FILTERS) &&
+			in_array($feeFilter, ToiletRepository::FEE_FILTERS))
 		{
 			$repo = $this->getRepository('Toilet');
-			$toilets = $repo->getNearby($lat, $long, $mincount, $maxcount, $maxdistance);
+			$toilets = $repo->getNearby($lat, $long, $mincount, $maxcount, $maxdistance, $accessibilityFilter, $feeFilter);
 			$apiResponse = new ApiSuccessResponse($toilets);
 		}
 		else
@@ -48,12 +53,16 @@ class ToiletController extends Controller {
 		$northWestLong = (double) $args['long_nw'];
 		$southEastLat = (double) $args['lat_se'];
 		$southEastLong = (double) $args['long_se'];
+		$accessibilityFilter = (int) $args['accessibility_filter'];
+		$feeFilter = (int) $args['fee_filter'];
 
 		if ($this->validateLatLong($northWestLat, $northWestLong) &&
-			$this->validateLatLong($southEastLat, $southEastLong))
+			$this->validateLatLong($southEastLat, $southEastLong) &&
+			in_array($accessibilityFilter, ToiletRepository::ACCESSIBILITY_FILTERS) &&
+			in_array($feeFilter, ToiletRepository::FEE_FILTERS))
 		{
 			$repo = $this->getRepository('Toilet');
-			$toilets = $repo->getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong);
+			$toilets = $repo->getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong, $accessibilityFilter, $feeFilter);
 			$apiResponse = new ApiSuccessResponse($toilets);
 		}
 		else

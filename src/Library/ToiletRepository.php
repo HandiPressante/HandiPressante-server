@@ -3,6 +3,25 @@ namespace App\Library;
 
 class ToiletRepository extends Repository {
 
+	const ACCESSIBILITY_FILTER_ADAPTED = 0;
+	const ACCESSIBILITY_FILTER_NOT_ADAPTED = 1;
+	const ACCESSIBILITY_FILTER_BOTH = 2;
+	const ACCESSIBILITY_FILTERS = [
+		self::ACCESSIBILITY_FILTER_ADAPTED, 
+		self::ACCESSIBILITY_FILTER_NOT_ADAPTED,
+		self::ACCESSIBILITY_FILTER_BOTH
+		];
+
+	const FEE_FILTER_FREE = 0;
+	const FEE_FILTER_CHARGED = 1;
+	const FEE_FILTER_BOTH = 2;
+	const FEE_FILTERS = [
+		self::FEE_FILTER_FREE, 
+		self::FEE_FILTER_CHARGED,
+		self::FEE_FILTER_BOTH
+		];
+
+
 	public function get($id) {
 		$stmt = $this->pdo->prepare('SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight FROM toilets WHERE id = :id');
 		$stmt->bindParam(":id", $id);
@@ -20,7 +39,7 @@ class ToiletRepository extends Repository {
 		return $result['count'] > 0;
 	}
 
-	public function getInRange($lat, $long, $latRange, $longRange) {
+	public function getInRange($lat, $long, $latRange, $longRange, $accessibilityFilter, $feeFilter) {
 		$latMin = max(-90, $lat - $latRange);
 		$latMax = min(90, $lat + $latRange);
 
@@ -45,6 +64,18 @@ class ToiletRepository extends Repository {
 			$query .= '(longitude >= :longMin AND longitude <= :longMax)';
 		}
 
+		if ($accessibilityFilter == self::ACCESSIBILITY_FILTER_ADAPTED) {
+			$query .= ' AND adapted = 1';
+		} elseif ($accessibilityFilter == self::ACCESSIBILITY_FILTER_NOT_ADAPTED) {
+			$query .= ' AND adapted = 0';
+		}
+
+		if ($feeFilter == self::FEE_FILTER_CHARGED) {
+			$query .= ' AND charged = 1';
+		} elseif ($feeFilter == self::FEE_FILTER_FREE) {
+			$query .= ' AND charged = 0';
+		}
+
 		$stmt = $this->pdo->prepare($query);
 		$stmt->bindParam(':latMin', $latMin);
 		$stmt->bindParam(':latMax', $latMax);
@@ -55,7 +86,7 @@ class ToiletRepository extends Repository {
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
-	public function getNearby($lat, $long, $mincount, $maxcount, $maxdistance) {
+	public function getNearby($lat, $long, $mincount, $maxcount, $maxdistance, $accessibilityFilter, $feeFilter) {
 		$latRange = 1.0;
 		$longRange = 1.0;
 		$count = 0;
@@ -63,7 +94,7 @@ class ToiletRepository extends Repository {
 		$candidateToilets = [];
 
 		while ($count < $mincount && !$toFar && $latRange <= 90 && $longRange <= 180) {
-			$candidateToilets = $this->getInRange($lat, $long, $latRange, $longRange);
+			$candidateToilets = $this->getInRange($lat, $long, $latRange, $longRange, $accessibilityFilter, $feeFilter);
 			$count = count($candidateToilets);
 
 			foreach ($candidateToilets as $key => $toilet) {
@@ -92,9 +123,21 @@ class ToiletRepository extends Repository {
 		return array_slice($candidateToilets, 0, $validCount);
 	}
 
-	public function getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong) {
+	public function getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong, $accessibilityFilter, $feeFilter) {
 		$query = 'SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
 				FROM toilets WHERE (latitude >= :latMin AND latitude <= :latMax) AND (longitude >= :longMin AND longitude <= :longMax)';
+
+		if ($accessibilityFilter == self::ACCESSIBILITY_FILTER_ADAPTED) {
+			$query .= ' AND adapted = 1';
+		} elseif ($accessibilityFilter == self::ACCESSIBILITY_FILTER_NOT_ADAPTED) {
+			$query .= ' AND adapted = 0';
+		}
+
+		if ($feeFilter == self::FEE_FILTER_CHARGED) {
+			$query .= ' AND charged = 1';
+		} elseif ($feeFilter == self::FEE_FILTER_FREE) {
+			$query .= ' AND charged = 0';
+		}
 
 		$stmt = $this->pdo->prepare($query);
 		$stmt->bindParam(':latMin', $southEastLat);
