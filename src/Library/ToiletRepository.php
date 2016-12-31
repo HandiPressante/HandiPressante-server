@@ -4,7 +4,7 @@ namespace App\Library;
 class ToiletRepository extends Repository {
 
 	public function get($id) {
-		$stmt = $this->pdo->prepare('SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight FROM toilets WHERE id = :id');
+		$stmt = $this->pdo->prepare('SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight FROM toilets WHERE id = :id');
 		$stmt->bindParam(":id", $id);
 		$stmt->execute();
 
@@ -36,13 +36,13 @@ class ToiletRepository extends Repository {
 			$onMeridian = true;
 		}
 
-		$query = 'SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
-				FROM toilets WHERE (lat84 >= :latMin AND lat84 <= :latMax) AND ';
+		$query = 'SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
+				FROM toilets WHERE (latitude >= :latMin AND latitude <= :latMax) AND ';
 
 		if ($onMeridian) {
-			$query .= '(long84 >= :longMin OR long84 <= :longMax)';
+			$query .= '(longitude >= :longMin OR longitude <= :longMax)';
 		} else {
-			$query .= '(long84 >= :longMin AND long84 <= :longMax)';
+			$query .= '(longitude >= :longMin AND longitude <= :longMax)';
 		}
 
 		$stmt = $this->pdo->prepare($query);
@@ -67,7 +67,7 @@ class ToiletRepository extends Repository {
 			$count = count($candidateToilets);
 
 			foreach ($candidateToilets as $key => $toilet) {
-				$distance = $this->distanceWGS84($lat, $long, $toilet['lat84'], $toilet['long84']);
+				$distance = $this->distanceWGS84($lat, $long, $toilet['latitude'], $toilet['longitude']);
 				if ($distance > $maxdistance) {
 					$toFar = true;
 				}
@@ -93,8 +93,8 @@ class ToiletRepository extends Repository {
 	}
 
 	public function getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong) {
-		$query = 'SELECT id, name, description, adapted, charged, lat84, long84, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
-				FROM toilets WHERE (lat84 >= :latMin AND lat84 <= :latMax) AND (long84 >= :longMin AND long84 <= :longMax)';
+		$query = 'SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
+				FROM toilets WHERE (latitude >= :latMin AND latitude <= :latMax) AND (longitude >= :longMin AND longitude <= :longMax)';
 
 		$stmt = $this->pdo->prepare($query);
 		$stmt->bindParam(':latMin', $southEastLat);
@@ -107,19 +107,20 @@ class ToiletRepository extends Repository {
 	}
 
 	public function add($name, $adapted, $charged, $description, $latitude, $longitude, $addedBy) {
-		$stmt = $this->pdo->prepare('INSERT INTO toilets_data (name, adapted, charged, description, lat84, long84, added_by) VALUES (:name, :adapted, :charged, :description, :latitude, :longitude, :addedBy)');
+		$stmt = $this->pdo->prepare('INSERT INTO toilets_data (name, adapted, charged, description, latitude, longitude, added_by, user_ip) VALUES (:name, :adapted, :charged, :description, :latitude, :longitude, :added_by, :user_ip)');
 		$stmt->bindParam(':name', $name);
 		$stmt->bindParam(":adapted", $adapted);
 		$stmt->bindParam(":charged", $charged);
 		$stmt->bindParam(":description", $description);
 		$stmt->bindParam(":latitude", $latitude);
 		$stmt->bindParam(":longitude", $longitude);
-		$stmt->bindParam(":addedBy", $addedBy);
+		$stmt->bindParam(":added_by", $addedBy);
+		$stmt->bindParam(":user_ip", $_SERVER['REMOTE_ADDR']);
 		return $stmt->execute();
 	}
 
 	public function update($id, $name, $adapted, $charged, $description, $latitude, $longitude) {
-		$stmt = $this->pdo->prepare('UPDATE toilets_data SET name = :name, adapted = :adapted, charged = :charged, description = :description, lat84 = :latitude, long84 = :longitude WHERE id = :id');
+		$stmt = $this->pdo->prepare('UPDATE toilets_data SET name = :name, adapted = :adapted, charged = :charged, description = :description, latitude = :latitude, longitude = :longitude WHERE id = :id');
 		$stmt->bindParam(':name', $name);
 		$stmt->bindParam(":adapted", $adapted);
 		$stmt->bindParam(":charged", $charged);
@@ -148,22 +149,24 @@ class ToiletRepository extends Repository {
 	}
 
 	public function addToiletRate($toiletId, $userId, $cleanlinessRate, $facilitiesRate, $accessibilityRate) {
-		$stmt = $this->pdo->prepare('INSERT INTO rates (toilet_id, user_id, cleanliness, facilities, accessibility) VALUES (:toilet_id, :user_id, :cleanliness, :facilities, :accessibility)');
+		$stmt = $this->pdo->prepare('INSERT INTO rates (toilet_id, user_id, cleanliness, facilities, accessibility, user_ip) VALUES (:toilet_id, :user_id, :cleanliness, :facilities, :accessibility, :user_ip)');
 		$stmt->bindParam(':toilet_id', $toiletId);
 		$stmt->bindParam(":user_id", $userId);
 		$stmt->bindParam(":cleanliness", $cleanlinessRate);
 		$stmt->bindParam(":facilities", $facilitiesRate);
 		$stmt->bindParam(":accessibility", $accessibilityRate);
+		$stmt->bindParam(":user_ip", $_SERVER['REMOTE_ADDR']);
 		return $stmt->execute();
 	}
 
 	public function updateToiletRate($toiletId, $userId, $cleanlinessRate, $facilitiesRate, $accessibilityRate) {
-		$stmt = $this->pdo->prepare('UPDATE rates SET cleanliness = :cleanliness, facilities = :facilities, accessibility = :accessibility WHERE toilet_id = :toilet_id AND user_id = :user_id');
+		$stmt = $this->pdo->prepare('UPDATE rates SET cleanliness = :cleanliness, facilities = :facilities, accessibility = :accessibility, user_ip = :user_ip WHERE toilet_id = :toilet_id AND user_id = :user_id');
 		$stmt->bindParam(':cleanliness', $cleanlinessRate);
 		$stmt->bindParam(":facilities", $facilitiesRate);
 		$stmt->bindParam(":accessibility", $accessibilityRate);
 		$stmt->bindParam(":toilet_id", $toiletId);
 		$stmt->bindParam(":user_id", $userId);
+		$stmt->bindParam(":user_ip", $_SERVER['REMOTE_ADDR']);
 		return $stmt->execute();
 	}
 
