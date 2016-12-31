@@ -26,6 +26,7 @@ $app->group('/toilets', function () {
 
 		$this->get('/list-{id:[0-9]+}', CommentController::class . ':list');
 		$this->post('/add', CommentController::class . ':add');
+		$this->post('/report', CommentController::class . ':report');
 
 	});
 
@@ -33,6 +34,7 @@ $app->group('/toilets', function () {
 
 		$this->get('/list-{id:[0-9]+}', PictureController::class . ':list');
 		$this->post('/add', PictureController::class . ':add');
+		$this->post('/report', PictureController::class . ':report');
 
 	});
 });

@@ -63,4 +63,39 @@ class CommentController extends Controller {
 		return $this->ci->json->render($response, $apiResponse->toArray());
 	}
 
+	public function report($request, $response) {
+		$data = $request->getParsedBody();
+
+		if (!isset($data['user_id']) || 
+			!isset($data['comment_id']))
+		{
+			$apiResponse = new ApiErrorResponse('Requête invalide.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+
+		$userId = new ApiUserId(filter_var($data['user_id'], FILTER_SANITIZE_STRING));
+		if (!$userId->isValid())
+		{
+			$apiResponse = new ApiErrorResponse('Identifiant invalide, essayez de redémarrer l\'application.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+		
+		$commentId = (int) $data['comment_id'];
+
+		$repo = $this->getRepository('Comment');
+		if (!$repo->exists($commentId))
+		{
+			$apiResponse = new ApiErrorResponse('Requête invalide.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+
+		if ($repo->addReport($commentId, $userId->toString())) {
+			$apiResponse = new ApiSuccessResponse();
+		} else {
+			$apiResponse = new ApiErrorResponse('Signalement impossible.');
+		}
+
+		return $this->ci->json->render($response, $apiResponse->toArray());
+	}
+
 };

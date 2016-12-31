@@ -100,4 +100,39 @@ class PictureController extends Controller {
 		return null;
 	}
 
+	public function report($request, $response) {
+		$data = $request->getParsedBody();
+
+		if (!isset($data['user_id']) || 
+			!isset($data['picture_id']))
+		{
+			$apiResponse = new ApiErrorResponse('Requête invalide.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+
+		$userId = new ApiUserId(filter_var($data['user_id'], FILTER_SANITIZE_STRING));
+		if (!$userId->isValid())
+		{
+			$apiResponse = new ApiErrorResponse('Identifiant invalide, essayez de redémarrer l\'application.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+		
+		$pictureId = (int) $data['picture_id'];
+
+		$repo = $this->getRepository('Picture');
+		if (!$repo->exists($pictureId))
+		{
+			$apiResponse = new ApiErrorResponse('Requête invalide.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+
+		if ($repo->addReport($pictureId, $userId->toString())) {
+			$apiResponse = new ApiSuccessResponse();
+		} else {
+			$apiResponse = new ApiErrorResponse('Signalement impossible.');
+		}
+
+		return $this->ci->json->render($response, $apiResponse->toArray());
+	}
+
 };
