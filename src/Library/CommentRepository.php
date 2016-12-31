@@ -12,11 +12,12 @@ class CommentRepository extends Repository {
 	}
 
 	public function add($toiletId, $userId, $username, $content) {
-		$stmt = $this->pdo->prepare('INSERT INTO comments (toilet_id, user_id, username, content, postdate) VALUES (:toilet_id, :user_id, :username, :content, NOW())');
+		$stmt = $this->pdo->prepare('INSERT INTO comments (toilet_id, user_id, username, content, postdate, user_ip) VALUES (:toilet_id, :user_id, :username, :content, NOW(), :user_ip)');
 		$stmt->bindParam(':toilet_id', $toiletId);
 		$stmt->bindParam(":user_id", $userId);
 		$stmt->bindParam(":username", $username);
 		$stmt->bindParam(":content", $content);
+		$stmt->bindParam(":user_ip", $_SERVER['REMOTE_ADDR']);
 		return $stmt->execute();
 	}
 

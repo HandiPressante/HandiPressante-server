@@ -12,10 +12,11 @@ class PictureRepository extends Repository {
 	}
 
 	public function add($toiletId, $userId, $filename) {
-		$stmt = $this->pdo->prepare('INSERT INTO pictures (toilet_id, user_id, filename, postdate) VALUES (:toilet_id, :user_id, :filename, NOW())');
+		$stmt = $this->pdo->prepare('INSERT INTO pictures (toilet_id, user_id, filename, postdate, user_ip) VALUES (:toilet_id, :user_id, :filename, NOW(), :user_ip)');
 		$stmt->bindParam(':toilet_id', $toiletId);
 		$stmt->bindParam(':user_id', $userId);
 		$stmt->bindParam(":filename", $filename);
+		$stmt->bindParam(":user_ip", $_SERVER['REMOTE_ADDR']);
 		return $stmt->execute();
 	}
 
