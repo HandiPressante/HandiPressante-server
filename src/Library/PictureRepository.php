@@ -3,11 +3,17 @@ namespace App\Library;
 
 class PictureRepository extends Repository {
 
-	public function getByToilet($toiletId) {
-		$stmt = $this->pdo->prepare('SELECT id, toilet_id, filename, postdate FROM pictures WHERE toilet_id = :toilet_id ORDER BY postdate DESC');
-		$stmt->bindParam(":toilet_id", $toiletId);
-		$stmt->execute();
+	public function getByToilet($toiletId, $userId = '') {
+		if (empty($userId)) {
+			$stmt = $this->pdo->prepare('SELECT id, toilet_id, filename, postdate FROM pictures WHERE toilet_id = :toilet_id ORDER BY postdate DESC');
+			$stmt->bindParam(":toilet_id", $toiletId);
+		} else {
+			$stmt = $this->pdo->prepare('SELECT id, toilet_id, filename, postdate FROM pictures WHERE toilet_id = :toilet_id AND id NOT IN (SELECT picture_id AS id FROM picture_reports WHERE user_id = :user_id) ORDER BY postdate DESC');
+			$stmt->bindParam(":toilet_id", $toiletId);
+			$stmt->bindParam(":user_id", $userId);
+		}
 
+		$stmt->execute();
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 	}
 

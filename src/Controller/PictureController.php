@@ -10,8 +10,15 @@ class PictureController extends Controller {
 	public function list($request, $response, $args) {
 		$id = (int) $args['id'];
 
+		$userId = new ApiUserId(filter_var($args['user_id'], FILTER_SANITIZE_STRING));
+		if (!$userId->isValid())
+		{
+			$apiResponse = new ApiErrorResponse('Identifiant invalide, essayez de redémarrer l\'application.');
+			return $this->ci->json->render($response, $apiResponse->toArray());
+		}
+
 		$repo = $this->getRepository('Picture');
-		$pictures = $repo->getByToilet($id);
+		$pictures = $repo->getByToilet($id, $userId->toString());
 
 		$apiResponse = new ApiSuccessResponse($pictures);
 

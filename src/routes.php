@@ -24,7 +24,7 @@ $app->group('/toilets', function () {
 
 	$this->group('/comments', function () {
 
-		$this->get('/list-{id:[0-9]+}', CommentController::class . ':list');
+		$this->get('/list-{id:[0-9]+}/{user_id}', CommentController::class . ':list');
 		$this->post('/add', CommentController::class . ':add');
 		$this->post('/report', CommentController::class . ':report');
 
@@ -32,7 +32,7 @@ $app->group('/toilets', function () {
 
 	$this->group('/pictures', function () {
 
-		$this->get('/list-{id:[0-9]+}', PictureController::class . ':list');
+		$this->get('/list-{id:[0-9]+}/{user_id}', PictureController::class . ':list');
 		$this->post('/add', PictureController::class . ':add');
 		$this->post('/report', PictureController::class . ':report');
 
