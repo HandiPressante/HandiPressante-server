@@ -3,6 +3,7 @@ use \App\Controller\ToiletController;
 use \App\Controller\CommentController;
 use \App\Controller\PictureController;
 use \App\Controller\MemoController;
+use \App\Controller\BugTrackerController;
 use \App\Controller\AdminController;
 use \App\Controller\AccessController;
 
@@ -44,6 +45,15 @@ $app->group('/memo', function () {
 
 	$this->get('/list', MemoController::class . ':list')
 		->setName('memo_list');
+
+});
+
+$app->group('/bugtracker', function() {
+
+	$this->map(['GET', 'POST'], '/report', BugTrackerController::class . ':report')
+		->setName('bugtracker_report');
+	$this->get('/acknowledgement', BugTrackerController::class . ':acknowledgement')
+		->setName('bugtracker_acknowledgement');
 
 });
 
