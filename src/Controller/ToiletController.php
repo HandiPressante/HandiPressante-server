@@ -178,7 +178,11 @@ class ToiletController extends Controller {
 		}
 
 		if ($success) {
-			$apiResponse = new ApiSuccessResponse();
+			if ($update) {
+				$apiResponse = new ApiSuccessResponse();
+			} else {
+				$apiResponse = new ApiSuccessResponse(array('toilet_id' => $repo->lastInsertId()));
+			}
 		} else {
 			$apiResponse = new ApiErrorResponse('Enregistrement impossible.');
 		}
