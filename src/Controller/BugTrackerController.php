@@ -35,12 +35,12 @@ class BugTrackerController extends Controller {
 				if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 					if (isset($data['observed_issue']))
-						$observed_issue = filter_var($data['observed_issue'], FILTER_SANITIZE_STRING);
+						$observed_issue = $data['observed_issue'];
 
 					if (!empty($observed_issue)) {
 
 						if (isset($data['expected_behaviour']))
-							$expected_behaviour = filter_var($data['expected_behaviour'], FILTER_SANITIZE_STRING);
+							$expected_behaviour = $data['expected_behaviour'];
 
 						if (!empty($expected_behaviour)) {
 

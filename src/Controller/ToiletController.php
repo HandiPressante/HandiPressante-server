@@ -149,10 +149,10 @@ class ToiletController extends Controller {
 			return $this->ci->json->render($response, $apiResponse->toArray());
 		}
 		
-		$name = filter_var($data['toilet_name'], FILTER_SANITIZE_STRING);
+		$name = $data['toilet_name'];
 		$adapted = (bool) $data['toilet_adapted'];
 		$charged = (bool) $data['toilet_charged'];
-		$description = filter_var($data['toilet_description'], FILTER_SANITIZE_STRING);
+		$description = $data['toilet_description'];
 		$latitude = (double) $data['toilet_latitude'];
 		$longitude = (double) $data['toilet_longitude'];
 

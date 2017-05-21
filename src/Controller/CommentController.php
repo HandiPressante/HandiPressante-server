@@ -46,8 +46,8 @@ class CommentController extends Controller {
 		}
 		
 		$toiletId = (int) $data['toilet_id'];
-		$username = filter_var($data['username'], FILTER_SANITIZE_STRING);
-		$content = filter_var($data['content'], FILTER_SANITIZE_STRING);
+		$username = $data['username'];
+		$content = $data['content'];
 
 		$repoToilets = $this->getRepository('Toilet');
 

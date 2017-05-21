@@ -26,7 +26,7 @@ class AdminController extends Controller {
 		if (isset($data['email']) && isset($data['password'])) {
 			$login_data = [];
 			$login_data['email'] = filter_var($data['email'], FILTER_SANITIZE_STRING);
-			$login_data['password'] = filter_var($data['password'], FILTER_SANITIZE_STRING);
+			$login_data['password'] = $data['password'];
 
 			$success = $this->user->authenticate($login_data['email'], $login_data['password'], $this->ci->pdo);
 
@@ -89,8 +89,8 @@ class AdminController extends Controller {
 			$repo = $this->getRepository('Access');
 
 			if ($repo->isPasswordTokenValid($id, $token)) {
-				$password = filter_var($data['password'], FILTER_SANITIZE_STRING);
-				$passwordConfirm = filter_var($data['passwordConfirm'], FILTER_SANITIZE_STRING);
+				$password = $data['password'];
+				$passwordConfirm = $data['passwordConfirm'];
 
 				if ($password == $passwordConfirm) {
 					if (strlen($password) >= 8) {
