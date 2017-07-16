@@ -39,5 +39,6 @@ return [
 
         // Upload settings
         'memo_upload_path' => __DIR__ . '/../public/memos/',
+        'picture_upload_path' => __DIR__ . '/../public/pictures/',
     ],
 ];

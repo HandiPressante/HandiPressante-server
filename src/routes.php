@@ -1,6 +1,9 @@
 <?php
 use \App\Controller\ToiletController;
+use \App\Controller\CommentController;
+use \App\Controller\PictureController;
 use \App\Controller\MemoController;
+use \App\Controller\BugTrackerController;
 use \App\Controller\AdminController;
 use \App\Controller\AccessController;
 
@@ -14,9 +17,27 @@ $app->get('/', function ($request, $response, $args) {
 $app->group('/toilets', function () {
 
 	$this->get('/get-{id:[0-9]+}', ToiletController::class . ':get');
-	$this->get('/get-nearby/{lat}/{long}/{mincount}/{maxcount}/{maxdistance}', ToiletController::class . ':getNearby');
-	$this->get('/get-area/{lat_nw}/{long_nw}/{lat_se}/{long_se}', ToiletController::class . ':getArea');
+	$this->get('/get-nearby/{lat}/{long}/{mincount}/{maxcount}/{maxdistance}/{accessibility_filter}/{fee_filter}', ToiletController::class . ':getNearby');
+	$this->get('/get-area/{lat_nw}/{long_nw}/{lat_se}/{long_se}/{accessibility_filter}/{fee_filter}', ToiletController::class . ':getArea');
 
+	$this->post('/save', ToiletController::class . ':save');
+	$this->post('/rate', ToiletController::class . ':rate');
+
+	$this->group('/comments', function () {
+
+		$this->get('/list-{id:[0-9]+}/{user_id}', CommentController::class . ':list');
+		$this->post('/add', CommentController::class . ':add');
+		$this->post('/report', CommentController::class . ':report');
+
+	});
+
+	$this->group('/pictures', function () {
+
+		$this->get('/list-{id:[0-9]+}/{user_id}', PictureController::class . ':list');
+		$this->post('/add', PictureController::class . ':add');
+		$this->post('/report', PictureController::class . ':report');
+
+	});
 });
 
 
@@ -24,6 +45,15 @@ $app->group('/memo', function () {
 
 	$this->get('/list', MemoController::class . ':list')
 		->setName('memo_list');
+
+});
+
+$app->group('/bugtracker', function() {
+
+	$this->map(['GET', 'POST'], '/report', BugTrackerController::class . ':report')
+		->setName('bugtracker_report');
+	$this->get('/acknowledgement', BugTrackerController::class . ':acknowledgement')
+		->setName('bugtracker_acknowledgement');
 
 });
 
