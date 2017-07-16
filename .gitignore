@@ -1,9 +1,9 @@
-/vendor/
-/logs/*
-!/logs/README.md
-/cache/twig/*
-!/cache/twig/.keepme
-/src/settings.php
+/public/slim/vendor/
+/public/slim/logs/*
+!/public/slim/logs/README.md
+/public/slim/cache/twig/*
+!/public/slim/cache/twig/.keepme
+/public/slim/src/settings.php
 /public/memos/*
 !/public/memos/.keepme
 /public/pictures/*
