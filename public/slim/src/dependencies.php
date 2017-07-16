@@ -65,7 +65,7 @@ $container['logger'] = function ($c) {
 $container['pdo'] = function ($c) {
     $settings = $c->get('settings')['pdo'];
 
-    $pdo = new PDO('mysql:host=localhost;dbname=' . $settings['dbname'].';charset=utf8', $settings['user'], $settings['pass']);
+    $pdo = new PDO('mysql:host=' . $settings['host'] . ';dbname=' . $settings['dbname'] . ';charset=utf8', $settings['user'], $settings['pass']);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     return $pdo;

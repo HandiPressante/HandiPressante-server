@@ -23,6 +23,7 @@ return [
 
         // PDO settings
         'pdo' => [
+            'host' => 'localhost',
             'dbname' => 'handipressante',
             'user' => 'root',
             'pass' => '',
