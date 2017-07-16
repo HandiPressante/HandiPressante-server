@@ -21,9 +21,11 @@ class ToiletRepository extends Repository {
 		self::FEE_FILTER_BOTH
 		];
 
+	const SQL_RATES_AVG = '(SELECT `t`.`id` AS `toilet_id`,avg(`r`.`cleanliness`) AS `cleanliness_avg`,avg(`r`.`facilities`) AS `facilities_avg`,avg(`r`.`accessibility`) AS `accessibility_avg`,COUNT(`r`.`toilet_id`) AS `weight` FROM (`toilets_data` `t` JOIN `rates` `r`) WHERE (`t`.`id` = `r`.`toilet_id`) GROUP BY `t`.`id`)';
+	const SQL_TOILETS = '(SELECT `t`.`id` AS `id`,`t`.`name` AS `name`,`t`.`description` AS `description`,`t`.`adapted` AS `adapted`,`t`.`charged` AS `charged`,`t`.`latitude` AS `latitude`,`t`.`longitude` AS `longitude`,coalesce(`a`.`cleanliness_avg`,0) AS `cleanliness_avg`,coalesce(`a`.`facilities_avg`,0) AS `facilities_avg`,coalesce(`a`.`accessibility_avg`,0) AS `accessibility_avg`,coalesce(`a`.`weight`,0) AS `rate_weight` FROM (`toilets_data` `t` LEFT JOIN ' . self::SQL_RATES_AVG . ' AS `a` ON(`t`.`id` = `a`.`toilet_id`))) AS toilets';
 
 	public function get($id) {
-		$stmt = $this->pdo->prepare('SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight FROM toilets WHERE id = :id');
+		$stmt = $this->pdo->prepare('SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight FROM ' . self::SQL_TOILETS . ' WHERE id = :id');
 		$stmt->bindParam(":id", $id);
 		$stmt->execute();
 
@@ -31,7 +33,7 @@ class ToiletRepository extends Repository {
 	}
 
 	public function exists($id) {
-		$stmt = $this->pdo->prepare('SELECT COUNT(*) as count FROM toilets WHERE id = :id');
+		$stmt = $this->pdo->prepare('SELECT COUNT(*) as count FROM ' . self::SQL_TOILETS . ' WHERE id = :id');
 		$stmt->bindParam(":id", $id);
 		$stmt->execute();
 
@@ -56,7 +58,7 @@ class ToiletRepository extends Repository {
 		}
 
 		$query = 'SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
-				FROM toilets WHERE (latitude >= :latMin AND latitude <= :latMax) AND ';
+				FROM ' . self::SQL_TOILETS . ' WHERE (latitude >= :latMin AND latitude <= :latMax) AND ';
 
 		if ($onMeridian) {
 			$query .= '(longitude >= :longMin OR longitude <= :longMax)';
@@ -125,7 +127,7 @@ class ToiletRepository extends Repository {
 
 	public function getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong, $accessibilityFilter, $feeFilter) {
 		$query = 'SELECT id, name, description, adapted, charged, latitude, longitude, cleanliness_avg, facilities_avg, accessibility_avg, rate_weight 
-				FROM toilets WHERE (latitude >= :latMin AND latitude <= :latMax) AND (longitude >= :longMin AND longitude <= :longMax)';
+				FROM ' . self::SQL_TOILETS . ' WHERE (latitude >= :latMin AND latitude <= :latMax) AND (longitude >= :longMin AND longitude <= :longMax)';
 
 		if ($accessibilityFilter == self::ACCESSIBILITY_FILTER_ADAPTED) {
 			$query .= ' AND adapted = 1';
