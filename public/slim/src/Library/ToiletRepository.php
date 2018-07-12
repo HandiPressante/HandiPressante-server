@@ -152,7 +152,7 @@ class ToiletRepository extends Repository {
 	}
 
 	public function add($name, $adapted, $charged, $description, $latitude, $longitude, $addedBy) {
-		$stmt = $this->pdo->prepare('INSERT INTO toilets_data (name, adapted, charged, description, latitude, longitude, added_by, user_ip) VALUES (:name, :adapted, :charged, :description, :latitude, :longitude, :added_by, :user_ip)');
+		$stmt = $this->pdo->prepare('INSERT INTO toilets_data (name, adapted, charged, description, latitude, longitude, postdate, added_by, user_ip) VALUES (:name, :adapted, :charged, :description, :latitude, :longitude, NOW(), :added_by, :user_ip)');
 		$stmt->bindParam(':name', $name);
 		$stmt->bindParam(":adapted", $adapted);
 		$stmt->bindParam(":charged", $charged);
@@ -194,7 +194,7 @@ class ToiletRepository extends Repository {
 	}
 
 	public function addToiletRate($toiletId, $userId, $cleanlinessRate, $facilitiesRate, $accessibilityRate) {
-		$stmt = $this->pdo->prepare('INSERT INTO rates (toilet_id, user_id, cleanliness, facilities, accessibility, user_ip) VALUES (:toilet_id, :user_id, :cleanliness, :facilities, :accessibility, :user_ip)');
+		$stmt = $this->pdo->prepare('INSERT INTO rates (toilet_id, user_id, cleanliness, facilities, accessibility, postdate, user_ip) VALUES (:toilet_id, :user_id, :cleanliness, :facilities, :accessibility, NOW(), :user_ip)');
 		$stmt->bindParam(':toilet_id', $toiletId);
 		$stmt->bindParam(":user_id", $userId);
 		$stmt->bindParam(":cleanliness", $cleanlinessRate);
