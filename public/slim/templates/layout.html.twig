@@ -45,7 +45,7 @@
 					<li class="bold"><a class="waves-effect waves-teal" href="{{ path_for('access_manage') }}">Gérer les accès</a></li>
 					<li class="bold"><a class="waves-effect waves-teal" href="#">Modérer</a></li>
 					<li class="bold"><a class="waves-effect waves-teal" href="{{ path_for('memo_manage') }}">Gérer les mémos</a></li>
-					<li class="bold"><a href="#">Voir les statistiques</a></li>
+					<li class="bold"><a class="waves-effect waves-teal" href="{{ path_for('stats_index') }}">Voir les statistiques</a></li>
 				{% endif %}
 			</ul>
 		</header>
@@ -86,5 +86,7 @@
 				});
 			})(jQuery);
 		</script>
+
+		{% block javascript %}{% endblock %}
 	</body>
 </html>

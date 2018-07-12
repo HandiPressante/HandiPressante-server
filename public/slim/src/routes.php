@@ -6,6 +6,7 @@ use \App\Controller\MemoController;
 use \App\Controller\BugTrackerController;
 use \App\Controller\AdminController;
 use \App\Controller\AccessController;
+use \App\Controller\StatisticsController;
 
 // Routes
 
@@ -117,6 +118,14 @@ $app->group('/admin', function () {
 		$this->post('/remove-confirm', MemoController::class . ':removeConfirm')
 		->setName('memo_remove_confirm')
 		->add($this->getContainer()->get('csrf'));
+
+	});
+
+
+	$this->group('/statistics', function() {
+
+		$this->map(['GET', 'POST'], '', StatisticsController::class . ':index')
+			->setName('stats_index');
 
 	});
 

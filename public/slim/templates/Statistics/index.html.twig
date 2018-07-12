@@ -1,0 +1,136 @@
+{% extends 'layout.html.twig' %}
+
+{% block pagetitle %}Statistiques{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Statistiques sur le contenu</span>
+
+                    <div class="row">
+                        <div class="col s4">
+                            <h5>Depuis le début</h5>
+
+                            <ul>
+                                <li><strong>Nombre total de toilettes :</strong> {{ toiletCount }}</li>
+                                <li><strong>Toilettes ajoutées par des utilisateurs :</strong> {{ newToiletCount }}</li>
+                            </ul>
+
+                            <ul>
+                                <li><strong>Descriptions :</strong> {{ descriptionCount }}</li>
+                                <li><strong>Photos :</strong> {{ pictures.count_pictures }} (réparties sur {{ pictures.count_toilets }} toilettes)</li>
+                                <li><strong>Notes :</strong> {{ rates.count_rates }} (réparties sur {{ rates.count_toilets }} toilettes)</li>
+                                <li><strong>Commentaires :</strong> {{ comments.count_comments }} (répartis sur {{ comments.count_toilets }} toilettes)</li>
+                            </ul>
+                        </div>
+
+                        <div class="col s4">
+                            <h5>Mois dernier</h5>
+
+                            <ul>
+                                <li><strong>Toilettes ajoutées par des utilisateurs :</strong> {{ newToiletCountLastMonth }}</li>
+                            </ul>
+
+                            <ul>
+                                <li><strong>Descriptions :</strong> {{ descriptionCountLastMonth }}</li>
+                                <li><strong>Photos :</strong> {{ picturesLastMonth.count_pictures }} (réparties sur {{ picturesLastMonth.count_toilets }} toilettes)</li>
+                                <li><strong>Notes :</strong> {{ ratesLastMonth.count_rates }} (réparties sur {{ ratesLastMonth.count_toilets }} toilettes)</li>
+                                <li><strong>Commentaires :</strong> {{ commentsLastMonth.count_comments }} (répartis sur {{ commentsLastMonth.count_toilets }} toilettes)</li>
+                            </ul>
+                        </div>
+
+                        <div class="col s4">
+                            <form method="post">
+                                <label for="date_start">Du </label><input type="text" name="date_start" id="date_start" value="{{ dateStart }}" class="datepicker" style="display:inline-block; width:40%; margin: 5px 2%;" />
+                                <label for="date_end">au </label><input type="text" name="date_end" id="date_end" value="{{ dateEnd }}" class="datepicker" style="display:inline-block; width:40%; margin: 5px 2%" />
+                                <button class="btn waves-effect waves-light" type="submit" name="update">Actualiser</button>
+                            </form>
+
+                            <ul>
+                                <li><strong>Toilettes ajoutées par des utilisateurs :</strong> {{ newToiletCountCustomPeriod }}</li>
+                            </ul>
+
+                            <ul>
+                                <li><strong>Descriptions :</strong> {{ descriptionCountCustomPeriod }}</li>
+                                <li><strong>Photos :</strong> {{ picturesCustomPeriod.count_pictures }} (réparties sur {{ picturesCustomPeriod.count_toilets }} toilettes)</li>
+                                <li><strong>Notes :</strong> {{ ratesCustomPeriod.count_rates }} (réparties sur {{ ratesCustomPeriod.count_toilets }} toilettes)</li>
+                                <li><strong>Commentaires :</strong> {{ commentsCustomPeriod.count_comments }} (répartis sur {{ commentsCustomPeriod.count_toilets }} toilettes)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Statistiques d'utilisation</span>
+
+                    <div class="row">
+                        <div class="col s4">
+                            <h5>Depuis le début*</h5>
+
+                            <ul>
+                                <li><strong>Nombre d'utilisateurs actifs :</strong> xxxx</li>
+                                <li><strong>Journées d'utilisation** :</strong> xxxx</li>
+                            </ul>
+
+                            <em>*introduction de cette mesure le 12/07/2018</em>
+                            <p><em>**somme des utilisateurs actifs par jour</em></p>
+                        </div>
+
+                        <div class="col s4">
+                            <h5>Mois dernier</h5>
+
+                            <ul>
+                                <li><strong>Nombre d'utilisateurs actifs :</strong> xxxx</li>
+                                <li><strong>Journées d'utilisation** :</strong> xxxx</li>
+                            </ul>
+
+                            <p><em>**somme des utilisateurs actifs par jour</em></p>
+                        </div>
+
+                        <div class="col s4">
+                            <form method="post">
+                                <label for="date_start">Du </label><input type="text" name="date_start" id="date_start" value="{{ dateStart }}" class="datepicker" style="display:inline-block; width:40%; margin: 5px 2%;" />
+                                <label for="date_end">au </label><input type="text" name="date_end" id="date_end" value="{{ dateEnd }}" class="datepicker" style="display:inline-block; width:40%; margin: 5px 2%" />
+                                <button class="btn waves-effect waves-light" type="submit" name="update">Actualiser</button>
+                            </form>
+
+                            <ul>
+                                <li><strong>Nombre d'utilisateurs actifs :</strong> xxxx</li>
+                                <li><strong>Journées d'utilisation** :</strong> xxxx</li>
+                            </ul>
+
+                            <p><em>**somme des utilisateurs actifs par jour</em></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.datepicker').datepicker({
+                //format: 'dd/mm/yyyy',
+                format: 'yyyy-mm-dd',
+                setDefaultDate: true,
+                i18n: {
+                    months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                    monthsShort: ["Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juill", "Août", "Sept", "Oct", "Nov", "Déc"],
+                    weekdays: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+                    weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+                    weekdaysAbbrev: ["D","L", "M", "M", "J", "V", "S"]
+                }
+            });
+        });
+    </script>
+{% endblock %}
