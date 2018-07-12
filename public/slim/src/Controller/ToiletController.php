@@ -39,6 +39,9 @@ class ToiletController extends Controller {
 			$repo = $this->getRepository('Toilet');
 			$toilets = $repo->getNearby($lat, $long, $mincount, $maxcount, $maxdistance, $accessibilityFilter, $feeFilter);
 			$apiResponse = new ApiSuccessResponse($toilets);
+
+			$repoStats = $this->getRepository('Statistics');
+			$repoStats->addNewRequest();
 		}
 		else
 		{
@@ -64,6 +67,9 @@ class ToiletController extends Controller {
 			$repo = $this->getRepository('Toilet');
 			$toilets = $repo->getArea($northWestLat, $northWestLong, $southEastLat, $southEastLong, $accessibilityFilter, $feeFilter);
 			$apiResponse = new ApiSuccessResponse($toilets);
+
+			$repoStats = $this->getRepository('Statistics');
+			$repoStats->addNewRequest();
 		}
 		else
 		{

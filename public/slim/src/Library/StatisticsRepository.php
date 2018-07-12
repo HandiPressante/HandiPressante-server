@@ -3,6 +3,51 @@ namespace App\Library;
 
 class StatisticsRepository extends Repository {
 
+    public function addNewRequest() {
+        $stmt = $this->pdo->prepare('INSERT IGNORE INTO usage_dates (`date`, ip) VALUES (NOW(), :ip)');
+        $stmt->bindParam(":ip", $_SERVER['REMOTE_ADDR']);
+        $stmt->execute();
+    }
+
+    public function activeUserCount() {
+        $stmt = $this->pdo->prepare('SELECT COUNT(DISTINCT ip) as count FROM usage_dates');
+        $stmt->execute();
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result['count'];
+    }
+
+    public function activeUserCountFromTo($from, $to) {
+        $stmt = $this->pdo->prepare('SELECT COUNT(DISTINCT ip) as count FROM usage_dates WHERE `date` >= :date_start AND `date` <= :date_end');
+
+        $stmt->bindParam(':date_start', $from->format('Y-m-d'));
+        $stmt->bindParam(':date_end', $to->format('Y-m-d'));
+        $stmt->execute();
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result['count'];
+    }
+
+    public function requestCount() {
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) as count FROM usage_dates');
+        $stmt->execute();
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result['count'];
+    }
+
+    public function requestCountFromTo($from, $to) {
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) as count FROM usage_dates WHERE `date` >= :date_start AND `date` <= :date_end');
+
+        $stmt->bindParam(':date_start', $from->format('Y-m-d'));
+        $stmt->bindParam(':date_end', $to->format('Y-m-d'));
+        $stmt->execute();
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result['count'];
+    }
+
+
     public function toiletCount() {
         $stmt = $this->pdo->prepare('SELECT COUNT(*) as count FROM toilets_data');
         $stmt->execute();

@@ -74,8 +74,8 @@
                             <h5>Depuis le début*</h5>
 
                             <ul>
-                                <li><strong>Nombre d'utilisateurs actifs :</strong> xxxx</li>
-                                <li><strong>Journées d'utilisation** :</strong> xxxx</li>
+                                <li><strong>Nombre d'utilisateurs actifs :</strong> {{ activeUserCount }}</li>
+                                <li><strong>Journées d'utilisation** :</strong> {{ requestCount }}</li>
                             </ul>
 
                             <em>*introduction de cette mesure le 12/07/2018</em>
@@ -86,8 +86,8 @@
                             <h5>Mois dernier</h5>
 
                             <ul>
-                                <li><strong>Nombre d'utilisateurs actifs :</strong> xxxx</li>
-                                <li><strong>Journées d'utilisation** :</strong> xxxx</li>
+                                <li><strong>Nombre d'utilisateurs actifs :</strong> {{ activeUserCountLastMonth }}</li>
+                                <li><strong>Journées d'utilisation** :</strong> {{ requestCountLastMonth }}</li>
                             </ul>
 
                             <p><em>**somme des utilisateurs actifs par jour</em></p>
@@ -101,8 +101,8 @@
                             </form>
 
                             <ul>
-                                <li><strong>Nombre d'utilisateurs actifs :</strong> xxxx</li>
-                                <li><strong>Journées d'utilisation** :</strong> xxxx</li>
+                                <li><strong>Nombre d'utilisateurs actifs :</strong> {{ activeUserCountCustomPeriod }}</li>
+                                <li><strong>Journées d'utilisation** :</strong> {{ requestCountCustomPeriod }}</li>
                             </ul>
 
                             <p><em>**somme des utilisateurs actifs par jour</em></p>

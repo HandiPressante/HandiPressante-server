@@ -50,6 +50,15 @@ class StatisticsController extends Controller {
             'ratesCustomPeriod' => $repo->rateCountFromTo($date_start, $date_end),
             'commentsCustomPeriod' => $repo->commentCountFromTo($date_start, $date_end),
 
+            'activeUserCount' => $repo->activeUserCount(),
+            'requestCount' => $repo->requestCount(),
+
+            'activeUserCountLastMonth' => $repo->activeUserCountFromTo($last_month_start, $last_month_end),
+            'requestCountLastMonth' => $repo->requestCountFromTo($last_month_start, $last_month_end),
+
+            'activeUserCountCustomPeriod' => $repo->activeUserCountFromTo($date_start, $date_end),
+            'requestCountCustomPeriod' => $repo->requestCountFromTo($date_start, $date_end),
+
             'dateStart' => $date_start->format('Y-m-d'),
             'dateEnd' => $date_end->format('Y-m-d'),
         ]);
