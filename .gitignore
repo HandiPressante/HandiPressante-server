@@ -8,3 +8,5 @@
 !/public/memos/.keepme
 /public/pictures/*
 !/public/pictures/.keepme
+
+composer\.phar
