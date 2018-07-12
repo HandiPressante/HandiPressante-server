@@ -13,7 +13,7 @@
       }
     }
     if (is_touch_device()) {
-      $('#nav-mobile').css({ overflow: 'auto'});
+      $('#slide-out').css({ overflow: 'auto'});
     }
 
   }); // end of document ready
